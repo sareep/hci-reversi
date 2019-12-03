@@ -312,8 +312,10 @@ var old_board = [
 ]
 
 var my_color = " ";
-
+var interval_timer;
 socket.on('game_update',function(payload){
+
+
     console.log("*** Client Log Message: 'game_update' payload: " + JSON.stringify(payload));
     /* Check for good board update */
     if (payload.result == "fail") {
@@ -330,17 +332,42 @@ socket.on('game_update',function(payload){
     }
 
     /* Update my color */
+    var border;
     if(socket.id == payload.game.player_white.socket){
         my_color = "white"
+        border = "black"
     }else if(socket.id == payload.game.player_black.socket){
         my_color = "black"
+        border = "white"
     }else{
         /* Something weird happened, send client back to lobby */
         console.log('something weird happened, sending back to lobby')
         window.location.href = "lobby.html?username="+username
     }
 
-    $('#my_color').html('<h3 id="my_color">I am ' + my_color+'</h3>')
+    $('#my_color').html('<h3 id="my_color" style="color: '+my_color+';text-shadow: 1px 1px '+border+'">You\'re playing as ' + capFirst(my_color) + '</h3>')
+    if(my_color == payload.game.whose_turn){
+        $('#my_color').append('<h4>Your turn! Elapsed time: <span id=\"elapsed\"></span></h4>')
+    }else{
+        $('#my_color').append('<h4>Waiting on '+payload.game.whose_turn+': <span id=\"elapsed\"></span></h4>')
+    }
+
+    clearInterval(interval_timer);
+    interval_timer = setInterval(function(last_time){
+            return function(){
+                var d = new Date();
+                var elapsedmilli = d.getTime() - last_time;
+                var minutes = Math.floor(elapsedmilli / (60 * 1000))
+                var seconds = Math.floor((elapsedmilli % (60 * 1000)) / 1000)
+
+                if(seconds < 10){
+                    $('#elapsed').html(minutes+':0'+seconds)
+                }else{
+                    $('#elapsed').html(minutes+':'+seconds)
+                }
+            }
+        }(payload.game.last_move_time),
+        1000)
 
     blacksum = 0;
     whitesum = 0;
@@ -359,6 +386,7 @@ socket.on('game_update',function(payload){
 
             /* if a board space has changed */
             if(old_board[row][col] != board[row][col]){
+                
                 if(old_board[row][col] == "?" && board[row][col] == " "){
                     $('#'+row+'_'+col).html('<img src="assets/images/empty.gif" alt="empty square"/>')
                 }
@@ -388,10 +416,13 @@ socket.on('game_update',function(payload){
                 }else{
                     $('#'+row+'_'+col).html('<img src="assets/images/error.gif" alt="error square"/>')
                 }
+            }
+            /* Interactivity */
+            $('#'+row+'_'+col).off('click');
+            $('#'+row+'_'+col).removeClass('hovered_over')
 
-                /* Interactivity */
-                $('#'+row+'_'+col).off('click');
-                if(board[row][col] == ' '){
+            if(payload.game.whose_turn === my_color){
+                if(payload.game.legal_moves[row][col] === my_color.substr(0,1)){
                     $('#'+row+'_'+col).addClass('hovered_over')
                     $('#'+row+'_'+col).click(function(r,c){
                         return function(){
@@ -403,12 +434,8 @@ socket.on('game_update',function(payload){
                             socket.emit('play_token',payload)
                         };
                     }(row,col))
-                }else{
-                    $('#'+row+'_'+col).removeClass('hovered_over')
                 }
-
             }
-
         }
     }
     $('#blacksum').html(blacksum)
@@ -439,3 +466,7 @@ socket.on('game_over',function(payload){
     $('#game_over').append('<a href="lobby.html?username='+username+'" class="btn btn-success btn-lg" role="button" aria-pressed="true">Return to lobby</a>')
 
 })
+
+function capFirst(string){
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}

@@ -545,7 +545,7 @@ io.sockets.on('connection', function (socket) {
         }
 
         var color = payload.color;
-        if (('undefined' === typeof row) || (color != 'white' && color != 'black')) {
+        if (('undefined' === typeof color) || (color != 'white' && color != 'black')) {
             var error_message = 'play_token did not specify a valid color, command aborted'
             log(error_message);
             socket.emit('play_token_response', { result: 'fail', message: error_message })
@@ -560,6 +560,22 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        if(color !== game.whose_turn){
+            var error_message = 'play_token message played out of turn'
+            log(error_message);
+            socket.emit('play_token_response', { result: 'fail', message: error_message })
+            return;
+        }
+
+        /* If the wrong socket is playing the color */
+        if(("white" == game.whose_turn && game.player_white.socket != socket.id) ||
+            ("black" == game.whose_turn && game.player_black.socket != socket.id)){
+            var error_message = 'play_token player played wrong color'
+            log(error_message);
+            socket.emit('play_token_response', { result: 'fail', message: error_message })
+            return;
+        }
+        
         var success_data = {
             result: 'success'
         }
@@ -569,10 +585,14 @@ io.sockets.on('connection', function (socket) {
         /* Change game board */
         if (color == 'white') {
             game.board[row][column] = 'w'
+            flip_board('w', row, column, game.board)
             game.whose_turn = 'black'
+            game.legal_moves = calculate_valid_moves('b', game.board)
         } else if (color == 'black') {
             game.board[row][column] = 'b'
+            flip_board('b', row, column, game.board)
             game.whose_turn = 'white'
+            game.legal_moves = calculate_valid_moves('w', game.board)
         }
 
         var d = new Date();
@@ -585,6 +605,78 @@ io.sockets.on('connection', function (socket) {
     /***************************************************/
     /* Code for the actual game                        */
 
+    
+    function check_line_match(who,dr,dc,r,c,board){
+        if(board[r][c] === who){
+            return true
+        }else if((r+dr < 0) || (r+dr > 7) || (c+dc < 0) || (c+dc > 7) || board[r][c] === " "){
+            return false;
+        }else{
+            return check_line_match(who,dr,dc,r+dr,c+dc,board);
+        }
+    }
+
+    /* Check if board[r][c] contains opposite of 'who' and if opposite end of line (dr->r, dc->c) is 'who' */
+    function valid_move(who, dr, dc, r,c,board){
+        var other; 
+        switch (who){
+            case 'b':
+                other = 'w'
+                break
+            case 'w':
+                other = 'b'
+                break
+            default:
+                log('Color problem: '+who);
+                return false;
+        }
+
+        if( (r+dr < 0) || (r+dr > 7) 
+            || (r+dr+dr < 0) || (r+dr+dr > 7) 
+            || (c+dc < 0) || (c+dc > 7) 
+            || (c+dc+dc < 0) || (c+dc+dc > 7) 
+            || (board[r+dr][c+dc] != other)){
+            return false;
+        }
+
+         return check_line_match(who,dr,dc,r+dr+dr,c+dc+dc,board)
+    }
+
+    function calculate_valid_moves(who, board){
+        let valid_board = [
+            [" ", " ", " ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " ", " ", " "],
+            [" ", " ", " ", " ", " ", " ", " ", " "]
+        ]
+
+        
+        for(let row=0;row<8;row++){
+            for(let col=0;col<8;col++){
+                if(board[row][col] === " "){
+                    let nw = valid_move(who, -1,-1,row,col,board);
+                    let nn = valid_move(who, -1, 0,row,col,board);
+                    let ne = valid_move(who, -1, 1,row,col,board);
+
+                    let ww = valid_move(who,  0,-1,row,col,board);
+                    let ee = valid_move(who,  0, 1,row,col,board);
+                    
+                    let sw = valid_move(who,  1,-1,row,col,board);
+                    let ss = valid_move(who,  1, 0,row,col,board);
+                    let se = valid_move(who,  1, 1,row,col,board);
+                    if(nw || nn || ne || ww || ee || sw || ss || se){
+                        valid_board[row][col] = who;
+                    }
+                }
+            }
+        }
+
+        return valid_board
+    }
 
     function create_new_game() {
         var new_game = {};
@@ -598,7 +690,7 @@ io.sockets.on('connection', function (socket) {
         var d = new Date();
         new_game.last_move_time = d.getTime()
 
-        new_game.whose_turn = 'white';
+        new_game.whose_turn = 'black';
 
         new_game.board = [
             [" ", " ", " ", " ", " ", " ", " ", " "],
@@ -611,9 +703,44 @@ io.sockets.on('connection', function (socket) {
             [" ", " ", " ", " ", " ", " ", " ", " "]
         ]
 
+        new_game.legal_moves = calculate_valid_moves('b',new_game.board);
+
         return new_game;
     }
 
+    function flip_line(who,dr,dc,r,c,board){
+        
+        if( (r+dr < 0) || (r+dr > 7) 
+        || (c+dc < 0) || (c+dc > 7) 
+        || (board[r+dr][c+dc] === ' ')){
+            return false;
+        }
+
+        if(board[r+dr][c+dc] === who){
+            return true;
+        }else if(flip_line(who,dr,dc,r+dr,c+dc,board)){
+            board[r+dr][c+dc] = who
+            return true
+        }else{
+            return false
+        }
+        
+    }
+
+    function flip_board(who, row, col, board){
+        
+        flip_line(who, -1,-1,row,col,board);
+        flip_line(who, -1, 0,row,col,board);
+        flip_line(who, -1, 1,row,col,board);
+
+        flip_line(who,  0,-1,row,col,board);
+        flip_line(who,  0, 1,row,col,board);
+
+        flip_line(who,  1,-1,row,col,board);
+        flip_line(who,  1, 0,row,col,board);
+        flip_line(who,  1, 1,row,col,board);
+
+    }
 
     function send_game_update(socket, game_id, message) {
         /* Check for existing game with this id */
@@ -690,21 +817,37 @@ io.sockets.on('connection', function (socket) {
 
         var row,col;
         var count = 0;
+        var black_final = 0
+        var white_final = 0
         for(row=0;row<8;row++){
             for(col=0;col<8;col++){
-                if(games[game_id].board[row][col] != ' '){
+                if(games[game_id].legal_moves[row][col] != ' '){
                     count++
+                }
+                if(games[game_id].board[row][col] === 'b'){
+                    black_final++
+                }
+                if(games[game_id].board[row][col] === 'w'){
+                    white_final++
                 }
             }
         }
 
         /* Send game over message */
-        if(count == 64){
+        if(count == 0){
+            var winner = 'tie game';
+            if(black_final>white_final){
+                winner = 'Black'
+            }
+            if(black_final<white_final){
+                winner = 'White'
+            }
+
             var success_data = {
                 result : 'success',
                 game: games[game_id],
                 game_id: game_id, 
-                winner: 'no one'
+                winner: winner
             }
 
             io.in(game_id).emit('game_over', success_data)

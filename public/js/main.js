@@ -240,6 +240,8 @@ socket.on("game_start_response", function(payload){
     $('.socket_'+payload.socket_id+' button').replaceWith(newNode)
 
     window.location.href = "game.html?username="+username+"&game_id="+payload.game_id;
+
+    console.log('after redirect')
 })
 
 /* Notification we have had a game begin */
@@ -295,7 +297,7 @@ $(function () {
     console.log("*** Client Log Message: 'join_room' payload: " + JSON.stringify(payload));
     socket.emit("join_room", payload);
 
-    $('#quit').append('<a href="lobby.html?username='+username+'" class="btn btn-danger btn-default" role="button" aria-pressed="true">Quit</a>')
+    $('#quit').append('<a href="lobby.html?username='+username+'" class="btn btn-danger" role="button" aria-pressed="true">Quit</a>')
 
 });
 
@@ -335,17 +337,21 @@ socket.on('game_update',function(payload){
     var border;
     if(socket.id == payload.game.player_white.socket){
         my_color = "white"
-        border = "black"
     }else if(socket.id == payload.game.player_black.socket){
         my_color = "black"
-        border = "white"
     }else{
         /* Something weird happened, send client back to lobby */
         console.log('something weird happened, sending back to lobby')
         window.location.href = "lobby.html?username="+username
     }
 
-    $('#my_color').html('<h3 id="my_color" style="color: '+my_color+';text-shadow: 1px 1px '+border+'">You\'re playing as ' + capFirst(my_color) + '</h3>')
+    if(my_color == 'black'){
+        $('#game_label').html('<h3 id="game_label">Game with '+payload.game.player_white.username)
+    }else{
+        $('#game_label').html('<h3 id="game_label">Game with '+payload.game.player_black.username)
+    }
+    
+    $('#my_color').html('<h3 id="my_color" style="color: '+my_color+';">You\'re playing as ' + capFirst(my_color) + '</h3>')
     if(my_color == payload.game.whose_turn){
         $('#my_color').append('<h4>Your turn! Elapsed time: <span id=\"elapsed\"></span></h4>')
     }else{
@@ -388,32 +394,43 @@ socket.on('game_update',function(payload){
             if(old_board[row][col] != board[row][col]){
                 
                 if(old_board[row][col] == "?" && board[row][col] == " "){
-                    $('#'+row+'_'+col).html('<img src="assets/images/empty.gif" alt="empty square"/>')
+                    // console.log('empty gif');
+                    // $('#'+row+'_'+col).html('<img src="assets/images/empty.gif" alt="empty square"/>')
+                    $('#'+row+'_'+col).addClass('bg-success')
                 }
                 else if(old_board[row][col] == "?" && board[row][col] == "w"){
+                    // console.log('empty to white gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
                 }
                 else if(old_board[row][col] == "?" && board[row][col] == "b"){
+                    // console.log('empty to black gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
                 }
                 else if(old_board[row][col] == " " && board[row][col] == "w"){
+                    // console.log('empty to white gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
                 }
                 else if(old_board[row][col] == " " && board[row][col] == "b"){
+                    // console.log('empty to black gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
                 }
                 else if(old_board[row][col] == "w" && board[row][col] == " "){
+                    // console.log('white to empty gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/white_to_empty.gif" alt="empty square"/>')
                 }
                 else if(old_board[row][col] == "b" && board[row][col] == " "){
+                    // console.log('black to empty gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/black_to_empty.gif" alt="empty square"/>')
                 }
                 else if(old_board[row][col] == "w" && board[row][col] == "b"){
+                    // console.log('white to black gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/white_to_black.gif" alt="black square"/>')
                 }
                 else if(old_board[row][col] == "b" && board[row][col] == "w"){
+                    // console.log('black to white gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/black_to_white.gif" alt="white square"/>')
                 }else{
+                    // console.log('error gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/error.gif" alt="error square"/>')
                 }
             }
@@ -438,8 +455,18 @@ socket.on('game_update',function(payload){
             }
         }
     }
+
+    let total = (blacksum + whitesum)
+
+    console.log(total)
     $('#blacksum').html(blacksum)
+    let bperc = blacksum/total*100
+    $('#blacksum-bar').attr('style', 'width: '+bperc+'%;')
+    
     $('#whitesum').html(whitesum)
+    let wperc = whitesum/total*100
+    $('#whitesum-bar').attr('style', 'width: '+wperc+'%;')
+
 
     old_board = board;
 })

@@ -1,6 +1,6 @@
-body {
+/* body {
     background-image: url("../images/Green.png");
-}
+} */
 
 table#game_board{
     margin:auto;
@@ -14,6 +14,8 @@ table#game_board td{
     border-style: solid;
     border-width: 1px;
     border-color: rgb(50,50,50);
+    width: 66px;
+    height: 66px;
 }
 
 #messages p{

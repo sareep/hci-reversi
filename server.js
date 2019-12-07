@@ -38,6 +38,7 @@ console.log('The Server is running');
 
 /* Registry of socket_id's and player info */
 var players = []
+var playerNames = new Set;
 var games = [];
 
 var io = require('socket.io').listen(app)
@@ -107,7 +108,17 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        //Check that the username is not already in use
+        if(playerNames.has(username)){
+            var error_message = 'join_room username already taken'
+            log(error_message)
+            socket.emit('join_room_response', { result: 'fail', message: error_message})
+            return
+        }
+
+        
         //Store info about this new player
+        playerNames.add(username)
         players[socket.id] = {};
         players[socket.id].username = username;
         players[socket.id].room = room;
@@ -162,6 +173,7 @@ io.sockets.on('connection', function (socket) {
                 socket_id: socket.id
             }
 
+            playerNames.delete(username)
             delete players[socket.id];
             io.in(room).emit('player_disconnected', payload);
         }

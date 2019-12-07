@@ -42,7 +42,17 @@ socket.on("log", function (array) {
 socket.on("join_room_response", function (payload) {
     console.log("join response: " + payload.username);
     if (payload.result == "fail") {
-        alert(payload.message);
+
+        if(payload.message == 'join_room username already taken'){
+            $('.alerts').append('<div class="alert alert-dismissible alert-danger text-center">'
+                                    + '<button type="button" class="close" data-dismiss="alert">&times;</button> '
+                                    + '<strong>Dang it! </strong>Looks like "'+payload.username+'" is being used by someone else. Please try another username!'
+                                + '</div>')
+            setTimeout(function(){window.location.replace('name.html')}, 5000)
+
+            }else{
+             alert(payload.message);
+        }
         return;
     }
     
@@ -459,11 +469,11 @@ socket.on('game_update',function(payload){
     let total = (blacksum + whitesum)
 
     console.log(total)
-    $('#blacksum').html(blacksum)
+    $('#blacksum').html('Black: '+blacksum)
     let bperc = blacksum/total*100
     $('#blacksum-bar').attr('style', 'width: '+bperc+'%;')
     
-    $('#whitesum').html(whitesum)
+    $('#whitesum').html('White: '+whitesum)
     let wperc = whitesum/total*100
     $('#whitesum-bar').attr('style', 'width: '+wperc+'%;')
 

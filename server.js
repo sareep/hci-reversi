@@ -80,7 +80,7 @@ io.sockets.on('connection', function (socket) {
      *   }
      */
     socket.on('join_room', function (payload) {
-        log("'join room' command" + JSON.stringify(payload));
+        log("'join room' command " + JSON.stringify(payload));
 
         //Check that the client sent a payload
         if (('undefined' === typeof payload) || (!payload)) {
@@ -112,7 +112,7 @@ io.sockets.on('connection', function (socket) {
         if(playerNames.has(username)){
             var error_message = 'join_room username already taken'
             log(error_message)
-            socket.emit('join_room_response', { result: 'fail', message: error_message})
+            socket.emit('join_room_response', { result: 'fail', message: error_message, username: username})
             return
         }
 
@@ -274,7 +274,7 @@ io.sockets.on('connection', function (socket) {
      *   }
      * */
     socket.on('invite', function (payload) {
-        log('invite with' + JSON.stringify(payload));
+        log('invite with ' + JSON.stringify(payload));
 
         if (('undefined' === typeof payload) || (!payload)) {
             var error_message = 'invite had no payload, command aborted';
@@ -348,7 +348,7 @@ io.sockets.on('connection', function (socket) {
      *   }
      * */
     socket.on('uninvite', function (payload) {
-        log('uninvite with' + JSON.stringify(payload));
+        log('uninvite with ' + JSON.stringify(payload));
 
         if (('undefined' === typeof payload) || (!payload)) {
             var error_message = 'uninvite had no payload, command aborted';

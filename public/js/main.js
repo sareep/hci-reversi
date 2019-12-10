@@ -43,14 +43,18 @@ socket.on("join_room_response", function (payload) {
     console.log("join response: " + payload.username);
     if (payload.result == "fail") {
 
-        if(payload.message == 'join_room username already taken'){
+        if(!('undefined' === typeof payload.username) || (payload.username)){
+            $('div.container-fluid').hide();
+
             $('.alerts').append('<div class="alert alert-dismissible alert-danger text-center">'
                                     + '<button type="button" class="close" data-dismiss="alert">&times;</button> '
-                                    + '<strong>Dang it! </strong>Looks like "'+payload.username+'" is being used by someone else. Please try another username!'
-                                + '</div>')
-            setTimeout(function(){window.location.replace('name.html')}, 5000)
+                                    + '<strong>Dang it! </strong>Looks like "'+ payload.username +'" is being used by someone else. '
+                                    + 'Please <a href="name.html" style="text-decoration:underline;">try another username!</a>'
+                                + '</div>');
 
-            }else{
+            setTimeout(function(){window.location.replace('name.html')}, 10000)
+
+        }else{
              alert(payload.message);
         }
         return;
@@ -251,7 +255,6 @@ socket.on("game_start_response", function(payload){
 
     window.location.href = "game.html?username="+username+"&game_id="+payload.game_id;
 
-    console.log('after redirect')
 })
 
 /* Notification we have had a game begin */
@@ -409,38 +412,29 @@ socket.on('game_update',function(payload){
                     $('#'+row+'_'+col).addClass('bg-success')
                 }
                 else if(old_board[row][col] == "?" && board[row][col] == "w"){
-                    // console.log('empty to white gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
                 }
                 else if(old_board[row][col] == "?" && board[row][col] == "b"){
-                    // console.log('empty to black gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
                 }
                 else if(old_board[row][col] == " " && board[row][col] == "w"){
-                    // console.log('empty to white gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
                 }
                 else if(old_board[row][col] == " " && board[row][col] == "b"){
-                    // console.log('empty to black gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
                 }
                 else if(old_board[row][col] == "w" && board[row][col] == " "){
-                    // console.log('white to empty gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/white_to_empty.gif" alt="empty square"/>')
                 }
                 else if(old_board[row][col] == "b" && board[row][col] == " "){
-                    // console.log('black to empty gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/black_to_empty.gif" alt="empty square"/>')
                 }
                 else if(old_board[row][col] == "w" && board[row][col] == "b"){
-                    // console.log('white to black gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/white_to_black.gif" alt="black square"/>')
                 }
                 else if(old_board[row][col] == "b" && board[row][col] == "w"){
-                    // console.log('black to white gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/black_to_white.gif" alt="white square"/>')
                 }else{
-                    // console.log('error gif');
                     $('#'+row+'_'+col).html('<img src="assets/images/error.gif" alt="error square"/>')
                 }
             }
@@ -468,7 +462,6 @@ socket.on('game_update',function(payload){
 
     let total = (blacksum + whitesum)
 
-    console.log(total)
     $('#blacksum').html('Black: '+blacksum)
     let bperc = blacksum/total*100
     $('#blacksum-bar').attr('style', 'width: '+bperc+'%;')

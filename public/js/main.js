@@ -366,9 +366,9 @@ socket.on('game_update',function(payload){
     
     $('#my_color').html('<h3 id="my_color" style="color: '+my_color+';">You\'re playing as ' + capFirst(my_color) + '</h3>')
     if(my_color == payload.game.whose_turn){
-        $('#timer').append('<h4>Your turn! Elapsed time: <span id=\"elapsed\"></span></h4>')
+        $('#timer').html('<h4>Your turn! Elapsed time: <span id=\"elapsed\"></span></h4>')
     }else{
-        $('#timer').append('<h4>Waiting on '+payload.game.whose_turn+': <span id=\"elapsed\"></span></h4>')
+        $('#timer').html('<h4>Waiting on '+payload.game.whose_turn+': <span id=\"elapsed\"></span></h4>')
     }
 
     clearInterval(interval_timer);
@@ -491,7 +491,8 @@ socket.on('game_over',function(payload){
         return;
     }
 
-    /* Jump to new page */
+    /* Show winner and provide link to lobby */
+    $('#timer').attr('hidden', true)
     $('#game_over').html('<h1>Game Over</h1><h2>Congratulations '+payload.winner+'!!</h2>')
     $('#game_over').append('<a href="lobby.html?username='+username+'" class="btn btn-success btn-lg" role="button" aria-pressed="true">Return to lobby</a>')
 

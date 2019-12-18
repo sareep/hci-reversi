@@ -1,3 +1,10 @@
 .alerts{
     z-index: 10;
 }
+
+#blacksum-bar{
+    background-color: black;
+}
+#whitesum-bar{
+    background-color: rgb(224, 224, 224);
+}

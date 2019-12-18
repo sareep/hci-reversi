@@ -366,9 +366,9 @@ socket.on('game_update',function(payload){
     
     $('#my_color').html('<h3 id="my_color" style="color: '+my_color+';">You\'re playing as ' + capFirst(my_color) + '</h3>')
     if(my_color == payload.game.whose_turn){
-        $('#my_color').append('<h4>Your turn! Elapsed time: <span id=\"elapsed\"></span></h4>')
+        $('#timer').append('<h4>Your turn! Elapsed time: <span id=\"elapsed\"></span></h4>')
     }else{
-        $('#my_color').append('<h4>Waiting on '+payload.game.whose_turn+': <span id=\"elapsed\"></span></h4>')
+        $('#timer').append('<h4>Waiting on '+payload.game.whose_turn+': <span id=\"elapsed\"></span></h4>')
     }
 
     clearInterval(interval_timer);

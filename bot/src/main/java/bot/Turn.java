@@ -6,53 +6,55 @@ package bot;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 
 public class Turn {
 
-    private Boolean my_move = false;
-    private String my_color = "";
+    private Boolean my_turn = false;
     private Move best_move;
     private ArrayList<Move> legal_moves = new ArrayList<Move>();
-    private String[][] board = new String[][]{};
+    private String[][] original_board = new String[][]{};
     private Instant endTime;
+    /**
+     * dlsReturn
+     */
+    public class DLSReturn {
+        public Move move;
+        public boolean remaining;
 
+        public DLSReturn(Move m, boolean b){
+            move = m;
+            remaining = b;
+        }
+    }
 
     /********* CONSTRUCTORS *********/
     
     /**
      * 
-     * @param my_move
-     * @param my_color
+     * @param my_turn
      * @param board
      * @param legal_moves
      */
-    public Turn(Boolean my_move, String my_color, String[][] board, String legal_moves[][]){
-        this.my_move = my_move;
+    public Turn(Boolean my_turn, String[][] board, String legal_moves[][]){
+        this.my_turn = my_turn;
 
         for (int i = 0; i < board.length; i++) {
-            System.arraycopy(board[i], 0, this.board[i], 0, board[0].length);
+            System.arraycopy(board[i], 0, this.original_board[i], 0, board[0].length);
         }
 
-        this.my_color = my_color;
+        this.best_move = new Move(Bot.my_color);
 
-        this.best_move = new Move(my_color);
-
-        this.legal_moves = calculateLegalMoves(my_color, legal_moves);
+        this.legal_moves = calculateLegalMoves(Bot.my_color, legal_moves);
     }
 
 
     /********* GETTERS AND SETTERS *********/
-    // TODO do i need most of these?
     
     /**
-     * @return the my_move
+     * @return if it is the bot's turn to play
      */
-    public Boolean isMyMove() {
-        return my_move;
+    public Boolean isMyTurn() {
+        return my_turn;
     }
 
     /**
@@ -61,28 +63,14 @@ public class Turn {
     public Move getBestMove() {
         return best_move;
     }
-
-    /**
-     * @param my_color the my_color to set
-     */
-    public void setMyColor(String my_color) {
-        this.my_color = my_color;
-    }
-
-    /**
-     * @return the my_color
-     */
-    public String getMyColor() {
-        return my_color;
-    }
     
     /**
      * @return the board
      */
     public String[][] getBoard() {
-        String[][] copy = new String[this.board.length][this.board[0].length];
-        for (int i = 0; i < board.length; i++) {
-            System.arraycopy(this.board[i], 0, copy[i], 0, copy[0].length);
+        String[][] copy = new String[this.original_board.length][this.original_board[0].length];
+        for (int i = 0; i < original_board.length; i++) {
+            System.arraycopy(this.original_board[i], 0, copy[i], 0, copy[0].length);
         }
         return copy;
     }
@@ -96,69 +84,40 @@ public class Turn {
 
 
     /********* LOGIC FUNCTIONS *********/
-    
-    // /**
-    //  * TODO do i even need this class? maybe just leave it as a 2d array
-    //  * @param board
-    //  * @return
-    //  */
-    // public String[] convertLegalMoves(String[][] board) {
 
-    //     HashSet<String> moves = new HashSet<String>();
-    //     for (int i = 0; i < board.length; i++) {
-    //         for (int j = 0; j < board[i].length; j++) {
-    //             // if(board[i][j] == Bot.this.my_color.substring(0,1)){ //TODO change this to pass in the color or something
-    //             //     moves.add(i+"_"+j);
-    //             // }
-    //         }
-    //     }
-
-    //     return (String[]) moves.toArray();
-    // }
-
-    /**
-     * 
-     * @param difficulty
-     * @return
-     */
     public Move getMove(String difficulty) {
+
+        ArrayList<Move> moveList;
+        int timeLimit = 0;
+
         switch (difficulty) {
             case "easy":
-                 getRandomMove();
-        
-            case "medium":
-                //TODO figure out how much logic to put in this one
+                getRandomMove();
+                break;
 
+            case "medium":
+                // ArrayList<Move> moveList = calculateLegalMoves(Bot.my_color, original_board);
+                timeLimit = 2;
 
             case "hard":
-                ArrayList<Move> moveList = calculateLegalMoves(my_color, board);
-                endTime = Instant.now().plusMillis(2000);
-                iterativeDeepening(moveList);
+                moveList = calculateLegalMoves(Bot.my_color, original_board);
+                if (timeLimit == 0) {
+                    timeLimit = 4;
+                }
+                endTime = Instant.now().plusSeconds(timeLimit);
+                IDDFS();
                 
             default:
                 getRandomMove();
         }
 
         return this.best_move;
-
-        // String[] moveArray = move.split("_");
-        // Integer[] payload = new Integer[moveArray.length];
-        // for (int i = 0; i < moveArray.length; i++) {
-        //     payload[i] = Integer.valueOf(moveArray[i]);
-        // }
-
-        // return payload;
     }
 
 
     /********* MOVE-SCREENING FUNCTIONS *********/
     // TODO hijack these fuctions to count the number of tokens that would be flipped?
 
-    /**
-     * 
-     * @param who
-     * @param board
-     */
     private ArrayList<Move> calculateLegalMoves(String who, String[][] board){
 
         ArrayList<Move> legal_moves = new ArrayList<Move>();
@@ -185,17 +144,7 @@ public class Turn {
 
         return legal_moves;
     }
-    
-    /**
-     * 
-     * @param who
-     * @param dr
-     * @param dc
-     * @param r
-     * @param c
-     * @param board
-     * @return
-     */
+   
     private Boolean valid_move(String who, int dr, int dc, int r, int c, String[][] board) {
         String other = ""; 
         switch (who){
@@ -222,16 +171,6 @@ public class Turn {
          return check_line_match(who,dr,dc,r+dr+dr,c+dc+dc,board);
     }
 
-    /**
-     * 
-     * @param who
-     * @param dr
-     * @param dc
-     * @param r
-     * @param c
-     * @param board
-     * @return
-     */
     private Boolean check_line_match(String who, int dr, int dc, int r, int c, String[][] board) {
         if(board[r][c] == who){
             return true;
@@ -253,84 +192,159 @@ public class Turn {
         return this.legal_moves.get((int) (Math.random() * (legal_moves.size())));
     }
 
-    private void iterativeDeepening(ArrayList<Move> moves) {
-        for (int _depth = 0; _depth < 1000000; _depth++) {
-			if (Instant.now().isBefore(endTime)) {
-				int v = alphaBeta(_depth);
-				if (v>best_move.getScore()) { 
-					for (Move m : moves) {
-						if (v == m.getScore()) {
-                            best_move.overwrite(m);
-						}
-					}
-				}
-				// deepestDepth = _depth;
-			}else {
-				return;
-			}
-		}
+
+
+
+    //stuff from wikipedia
+    private Move IDDFS() {
+        DLSReturn returnVal = new DLSReturn(null, false);
+        for (int depth = 0; depth < 100000; depth++) {
+            if(Instant.now().isBefore(endTime)){
+                returnVal = DLS(Bot.lastMove, depth);
+                
+                if(returnVal.move != null){
+                    return returnVal.move;
+                }else if(!returnVal.remaining){
+                    return null;//TODO return the next best move instead
+                }
+            }else{
+                break;
+            }
+        }
+
+        //return best move found so far
+        return returnVal.move;
     }
 
-    private int alphaBeta(int maxDepth) {
-        int v = 0;
-		v = maxValue(move, -1000000, 1000000, 0, maxDepth);
-		// if(!Instant.now().isBefore(endTime)){return v;}
-		return v;
+    private DLSReturn DLS(Move move, int depth) {
+        if(depth == 0){
+            if(isTerminalMove(move) && (winner(move) == Bot.my_color)){
+                return new DLSReturn(move, true);
+            }else{
+                return new DLSReturn(null, true);
+            }
+        }else if(depth > 0){
+            boolean any_remaining = false;
+            //TODO recursively loop over children states (while loop with var outside that gets updated?)
+            do{
+
+            }while(any_remaining);
+        }
+
+        return new DLSReturn(null, false);
     }
 
-    /**
-	 * Calculates the highest utility move for this player and returns it
-	 * Used pseudo-code from the textbook, page 711
-	 * @param previousMove the move to test
-	 * @param max the maximum utility
-	 * @param min the minimum utility
-	 * @param currentDepth how deep the search has progressed
-	 * @return value of the best move for this player
-	 */
-    public int maxValue(Move previousMove, int max, int min, int currentDepth, int maxDepth) {
-		int v = -1000000;
-		for(Move m : legalMoves) {
-			if (currentDepth <= maxDepth && Instant.now().isBefore(endTime)){
-				m.calculateUtility();
-				m.setBoardState(previousMove.getBoardState());
-				m.updateBoard(m.getRow(), m.getCol(), myColor.charAt(0));
-				v = Math.max(v, minValue(m, max, min, currentDepth, maxDepth)); 
-				if (v>=min) {
-					return v;
-				}
-				max = Math.max(max, v);
-			}else {
-				return v;
-			}
-		}
-		return v;
+    // TODO what if this was in the move? then it can stop calculating once it finds 1 move
+    private boolean isTerminalMove(Move m) {
+        ArrayList<Move> moves_available = calculateLegalMoves(m.getWho().substring(0, 1), m.getResultingBoard());
+        return (moves_available.size() == 0);
     }
+
+    private String winner(Move m) {
+        String winner = "";
+        int black = m.getBlack_score();
+        int white = m.getWhite_score();
+
+        if(black > white){
+            winner = "black";
+        }else if(black < white){
+            winner = "white";
+        }else if(black == white){
+            winner = "tie";
+        }else{
+            System.out.println("There's a big math error here");
+            System.exit(1);
+        }
+
+        return winner;
+    }
+
+
+
     
-    /**
-	 * Calculates the highest utility move for the opponent and returns it
-	 * Used pseudo-code from the textbook, page 711
-	 * @param previousMove the move to test
-	 * @param max the maximum utility
-	 * @param min the minimum utility
-	 * @param currentDepth how deep the search has progressed
-	 * @return value of the best move for the opponent
-	 */
-	public  int minValue(Move previousMove, int max, int min, int currentDepth, int maxDepth) {
-		int v = 1000000;
-		for(Move m : legalMoves){
-			if (currentDepth <= maxDepth && Instant.now().isBefore(endTime)) {
-				m.calculateUtility();
-				m.setBoardState(previousMove.getBoardState());
-				m.updateBoard(m.getRow(), m.getCol(), oppColor.charAt(0));
-				v = Math.min(v, maxValue(m, max, min, currentDepth+1, maxDepth));
-				if (v<=max) {
-					return v;
-				}
-				min = Math.min(min, v);
-			}else{
-				return v;
-			}
-		}
-		return v;
-	}
+    
+    
+    
+
+    // // stuff from gomoku player
+    // private void iterativeDeepening(ArrayList<Move> moves) {
+    //     for (int _depth = 0; _depth < 1000000; _depth++) {
+	// 		if (Instant.now().isBefore(endTime)) {
+	// 			int v = alphaBeta(_depth);
+	// 			if (v>best_move.getUtility()) { 
+	// 				for (Move m : moves) {
+	// 					if (v == m.getUtility()) {
+    //                         best_move.overwrite(m);
+	// 					}
+	// 				}
+	// 			}
+	// 			// deepestDepth = _depth;
+	// 		}else {
+	// 			return;
+	// 		}
+	// 	}
+    // }
+
+    // private int alphaBeta(int maxDepth) {
+    //     int v = 0;
+	// 	v = maxValue(move, -1000000, 1000000, 0, maxDepth);
+	// 	// if(!Instant.now().isBefore(endTime)){return v;}
+	// 	return v;
+    // }
+
+    // /**
+	//  * Calculates the highest utility move for this player and returns it
+	//  * Used pseudo-code from the textbook, page 711
+	//  * @param previousMove the move to test
+	//  * @param max the maximum utility
+	//  * @param min the minimum utility
+	//  * @param currentDepth how deep the search has progressed
+	//  * @return value of the best move for this player
+	//  */
+    // public int maxValue(Move previousMove, int max, int min, int currentDepth, int maxDepth) {
+	// 	int v = -1000000;
+	// 	for(Move m : legal_moves) {
+	// 		if (currentDepth <= maxDepth && Instant.now().isBefore(endTime)){
+	// 			m.calculateUtility();
+	// 			m.setBoardState(previousMove.getResultingBoard());
+	// 			m.updateBoardState(m.getRow(), m.getCol(), Bot.my_color.substring(0,1));
+	// 			v = Math.max(v, minValue(m, max, min, currentDepth, maxDepth)); 
+	// 			if (v>=min) {
+	// 				return v;
+	// 			}
+	// 			max = Math.max(max, v);
+	// 		}else {
+	// 			return v;
+	// 		}
+	// 	}
+	// 	return v;
+    // }
+    
+    // /**
+	//  * Calculates the highest utility move for the opponent and returns it
+	//  * Used pseudo-code from the textbook, page 711
+	//  * @param previousMove the move to test
+	//  * @param max the maximum utility
+	//  * @param min the minimum utility
+	//  * @param currentDepth how deep the search has progressed
+	//  * @return value of the best move for the opponent
+	//  */
+	// public  int minValue(Move previousMove, int max, int min, int currentDepth, int maxDepth) {
+	// 	int v = 1000000;
+	// 	for(Move m : legal_moves){
+	// 		if (currentDepth <= maxDepth && Instant.now().isBefore(endTime)) {
+	// 			m.calculateUtility();
+	// 			m.setBoardState(previousMove.getResultingBoard());
+	// 			m.updateBoardState(m.getRow(), m.getCol(), Bot.opponent_color.substring(0,1));
+	// 			v = Math.min(v, maxValue(m, max, min, currentDepth+1, maxDepth));
+	// 			if (v<=max) {
+	// 				return v;
+	// 			}
+	// 			min = Math.min(min, v);
+	// 		}else{
+	// 			return v;
+	// 		}
+	// 	}
+	// 	return v;
+	// }
 }

@@ -1,1 +1,1 @@
-web: node server.js
+web: node --debug=9090 server.js

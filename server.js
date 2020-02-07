@@ -882,9 +882,9 @@ var child = require('child_process').spawn(
 );
 
 child.stdout.on('data', function(data) {
-    console.log("**RL_BOT: " + data.toString());
+    console.log(data.toString());
 });
 
 child.stderr.on('data', function(data) {
-    console.log("**RL_BOT: " + data.toString());
+    console.log(data.toString());
 });

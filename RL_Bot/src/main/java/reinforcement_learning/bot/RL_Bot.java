@@ -31,11 +31,16 @@ import io.socket.emitter.Emitter;
  */
 public class RL_Bot {
 
+	private static int maxGames = 0;
+	private static int gamesPlayed = 0;
+	private static int join_lobby_fail_count = 0;
+
 	private static Socket socket = null;
 	private static String room = null;
 	private static String username = null;
+	private static String trainee = null;
 	private static String port = null;
-	private static int join_lobby_fail_count = 0;
+	private static String role = null;
 	static String difficulty = null;
 	static String my_color = null;
 	static String opp_color = null;
@@ -47,15 +52,16 @@ public class RL_Bot {
 	 * @throws URISyntaxException
 	 */
 	public static void main(String[] args) throws URISyntaxException {
-		
-		//Defaults
+
+		// Defaults
 		room = "lobby";
 		username = "BotRL";
 		port = "8080";
+		maxGames = 2;// TODO change this as we go
 
-		String[] args_split = new String[]{};
-		if(args.length > 0){
-			out("args0: " + args[0]);
+		String[] args_split = new String[] {};
+		if (args.length > 0) {
+			out("setup args0: " + args[0]);
 			args_split = args[0].split(",");
 		}
 
@@ -63,17 +69,19 @@ public class RL_Bot {
 			port = args_split[0];
 			username = args_split[1];
 			difficulty = args_split[2];
+			role = args_split[3];
+			if (role.equals("train")) {
+				trainee = username.replace("_trainer", "");
+			}
 		} else if (args.length == 0) {
 			username = "BotRL_Easy";
 			difficulty = "easy";
 		} else {
-			err("Recieved " + args_split.length
-					+ " args: " + args[0] 
+			err("Recieved " + args_split.length + " args: " + args[0]
 					+ ". Expected either 0 args or <port> <username> <difficulty>");
 			System.exit(1);
 		}
 
-		
 		out("Assigned params");
 		socket = IO.socket("http://localhost:" + port);
 		setupSocket();
@@ -143,31 +151,40 @@ public class RL_Bot {
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
 				switch (response.getString("result")) {
-					case "fail":
-						err("didn't join room correctly, going to lobby");
-						err(response.getString("message"));
+				case "fail":
+					err("didn't join room correctly, going to lobby");
+					err(response.getString("message"));
 
-						join_lobby_fail_count++;
-						if (join_lobby_fail_count > 5) {
-							err("Failed to join lobby 10 times, terminating.");
-							System.exit(1);
-						} else {
-							joinRoom("lobby");
-						}
-						break;
-
-					case "success":
-						if (username.equals(response.getString("username"))) {
-							room = response.getString("room");
-							out("Joined room " + room);
-							join_lobby_fail_count = 0;
-						}
-						break;
-
-					default:
-						err("Malformed join_room response from server, exiting");
+					join_lobby_fail_count++;
+					if (join_lobby_fail_count > 5) {
+						err("Failed to join lobby 10 times, terminating.");
 						System.exit(1);
-						break;
+					} else {
+						joinRoom("lobby");
+					}
+					break;
+
+				case "success":
+					if (username.equals(response.getString("username"))) {
+						room = response.getString("room");
+						out("Joined room " + room);
+						join_lobby_fail_count = 0;
+					}
+
+					if (role.equals("train") 
+							&& trainee.equals(response.getString("username"))
+							&& room.equals("lobby")) {
+						JSONObject payload = new JSONObject();
+						payload.put("requested_user", trainee);
+						socket.emit("invite", payload);
+					}
+
+					break;
+
+				default:
+					err("Malformed join_room response from server, exiting");
+					System.exit(1);
+					break;
 				}
 			}
 
@@ -244,6 +261,13 @@ public class RL_Bot {
 				JSONObject response = (JSONObject) args[0];
 				out("Game over! Winner is " + response.getString("winner"));
 				socket.disconnect();
+
+				// Real bots rejoin lobby, trainers exit
+				gamesPlayed++;
+				if (role.equals("train") && (maxGames <= gamesPlayed)) {
+					out("Training session over! Shutting down.");
+					System.exit(0);
+				}
 				room = "lobby";
 				socket.connect();
 			}
@@ -280,23 +304,23 @@ public class RL_Bot {
 	}
 
 	public static void print(String message, String type) {
-		String output = "**"+username+": ";
-		if(port.equals("8080")){
+		String output = "**" + username + ": ";
+		if (port.equals("8080")) {
 			message += "\n";
 		}
 
 		switch (type) {
-			case "out":
-				output += message;
-				System.out.print(output);
-				break;
-			case "err":
-				output += "ERROR: ";
-				output += message;
-				System.err.print(output);
-				break;
-			default:
-				break;
+		case "out":
+			output += message;
+			System.out.print(output);
+			break;
+		case "err":
+			output += "ERROR: ";
+			output += message;
+			System.err.print(output);
+			break;
+		default:
+			break;
 		}
 	}
 

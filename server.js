@@ -135,6 +135,7 @@ io.sockets.on('connection', function (socket) {
             room: room,
             username: username,
             socket_id: socket.id,
+            is_bot: payload.is_bot,
             membership: numClients
         };
         io.in(room).emit('join_room_response', success_data)
@@ -613,6 +614,80 @@ io.sockets.on('connection', function (socket) {
     })
 
 
+    socket.on('spawn_bot', function (payload) {
+
+
+        /** Screen the payload **/
+        if (('undefined' === typeof payload) || (!payload)) {
+            var error_message = 'spawn_bot had no payload, command aborted';
+            log(error_message);
+            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
+        if (('undefined' === typeof payload.name) || (!payload.name)) {
+            payload.name = "Bot_RL_" + (1 + Math.random()).toString().substr(0, 2)
+
+            // TODO implement this?  
+            // var error_message = 'spawn_bot had no name, command aborted';
+            // log(error_message);
+            // socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            // return;
+        }
+
+        if (('undefined' === typeof payload.difficulty) || (!payload.difficulty)) {
+            var error_message = 'spawn_bot had no difficulty, command aborted';
+            log(error_message);
+            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
+        /** Spawn RL Bot **/
+        var bot_args = [port, payload.name, payload.difficulty]
+        var child = require('child_process').spawn(
+            'java', ['-jar', 'bot_exes/RL_Bot.jar', bot_args]
+        );
+
+        child.stdout.on('data', function (data) {
+            console.log(data.toString());
+        });
+
+        child.stderr.on('data', function (data) {
+            console.log(data.toString());
+        });
+    })
+
+
+    socket.on('kill_bot', function (payload) {
+        /** Screen the payload **/
+        if (('undefined' === typeof payload) || (!payload)) {
+            var error_message = 'kill_bot had no payload, command aborted';
+            log(error_message);
+            socket.emit('kill_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
+        if (('undefined' === typeof payload.to_kill) || (!payload.to_kill)) {
+            var error_message = 'kill_bot had no socket, command aborted';
+            log(error_message);
+            socket.emit('kill_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+        
+        if (('undefined' === typeof payload.terminator) || (!payload.terminator)) {
+            var error_message = 'kill_bot had no socket, command aborted';
+            log(error_message);
+            socket.emit('kill_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
+        /** Kill The Bot**/
+        payload_out = {}
+        payload_out.terminator = payload.terminator
+        socket.to(payload.to_kill).emit('terminate', payload_out)
+    })
+
+
     /***************************************************/
     /* Code for the actual game                        */
 
@@ -874,17 +949,3 @@ io.sockets.on('connection', function (socket) {
 
     }
 })
-
-/** Spawn RL Bot **/
-var bot_args = [port,"Bot_RL","easy"]
-var child = require('child_process').spawn(
-    'java', ['-jar', 'RL_Bot.jar', bot_args]
-);
-
-child.stdout.on('data', function(data) {
-    console.log(data.toString());
-});
-
-child.stderr.on('data', function(data) {
-    console.log(data.toString());
-});

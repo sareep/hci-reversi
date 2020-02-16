@@ -626,13 +626,10 @@ io.sockets.on('connection', function (socket) {
         }
 
         if (('undefined' === typeof payload.name) || (!payload.name)) {
-            payload.name = "Bot_RL_" + (1 + Math.random()).toString().substr(0, 2)
-
-            // TODO implement this?  
-            // var error_message = 'spawn_bot had no name, command aborted';
-            // log(error_message);
-            // socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
-            // return;
+            var error_message = 'spawn_bot had no name, command aborted';
+            log(error_message);
+            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            return;
         }
 
         if (('undefined' === typeof payload.difficulty) || (!payload.difficulty)) {
@@ -642,12 +639,62 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        /** Spawn RL Bot **/
-        var bot_args = [port, payload.name, payload.difficulty]
-        var child = require('child_process').spawn(
-            'java', ['-jar', 'bot_exes/RL_Bot.jar', bot_args]
+
+        log(payload.train_method)
+        if (('undefined' === typeof payload.train_method) || (!payload.train_method)) {
+            var error_message = 'spawn_bot had no train_method, command aborted';
+            log(error_message);
+            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
+        /** Spawn RL Bot(s) **/
+        switch (payload.train_method) {
+            case "none":
+                spawn_bot(port, "rl", payload.name, payload.difficulty)
+
+            case "rl_bot":
+                spawn_bot(port, "rl", payload.name, payload.difficulty)
+                spawn_bot(port, "rl", payload.name + "_trainer", payload.difficulty, "train")
+                break;
+
+            case "ab_bot":
+                spawn_bot(port, "ab", payload.name, payload.difficulty)
+                break;
+
+            default:
+                break;
+        }
+
+    })
+
+    /**
+     * Creates a bot by finding & running a jar
+     * @param {string} port 
+     * @param {string} type 
+     * @param {string} difficulty 
+     * @param {string} name 
+     * @param {string} role 
+     */
+    function spawn_bot(port, difficulty, name, type, role = "play") {
+        let args = [port, name, difficulty]
+        let jar;
+
+        //get the right jar
+        if (type === "ab") {
+            jar = "AB_Bot.jar"
+        } else {
+            args.push(role)
+            jar = "RL_Bot.jar"
+        }
+
+        //spawn the bot
+        let child = require('child_process').spawn(
+            'java', ['-jar', 'bot_exes/' + jar, args]
         );
 
+
+        //handle I/O
         child.stdout.on('data', function (data) {
             console.log(data.toString());
         });
@@ -655,7 +702,9 @@ io.sockets.on('connection', function (socket) {
         child.stderr.on('data', function (data) {
             console.log(data.toString());
         });
-    })
+    }
+
+
 
 
     socket.on('kill_bot', function (payload) {
@@ -673,7 +722,7 @@ io.sockets.on('connection', function (socket) {
             socket.emit('kill_bot_reponse', { result: 'fail', message: error_message })
             return;
         }
-        
+
         if (('undefined' === typeof payload.terminator) || (!payload.terminator)) {
             var error_message = 'kill_bot had no socket, command aborted';
             log(error_message);

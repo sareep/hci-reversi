@@ -284,10 +284,11 @@ function game_start(who) {
 }
 
 
-function spawn_bot(difficulty, name) {
+function spawn_bot(difficulty, train_method) {
     var payload = {};
     payload.difficulty = difficulty
-    payload.name = name
+    payload.train_method = train_method
+    payload.name = username + "_botRL"
 
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
     socket.emit('spawn_bot', payload)

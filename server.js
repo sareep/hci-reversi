@@ -639,8 +639,6 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-
-        log(payload.train_method)
         if (('undefined' === typeof payload.train_method) || (!payload.train_method)) {
             var error_message = 'spawn_bot had no train_method, command aborted';
             log(error_message);

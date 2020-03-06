@@ -40,7 +40,7 @@ socket.on("log", function (array) {
 
 /* Join Room Actions */
 socket.on("join_room_response", function (payload) {
-    console.log("join response: " + payload.username);
+    console.log("join response: " + JSON.stringify(payload));
     if (payload.result == "fail") {
 
         if (!('undefined' === typeof payload.username) || (payload.username)) {
@@ -96,7 +96,9 @@ socket.on("join_room_response", function (payload) {
         $("#players").append(nodeA, nodeB, nodeC);
 
         //Add kill button to bots
+        console.log('payload.is_bot value: ');console.log(payload.is_bot)
         if (payload.is_bot) {
+            console.log('is bot from top')
             var nodeK = $("<div><div>")
             nodeK.addClass("socket_" + payload.socket_id)
             nodeK.addClass("bot col-2 text-left")
@@ -105,6 +107,8 @@ socket.on("join_room_response", function (payload) {
             nodeK.hide();
             $('#players').append(nodeK)
             nodeK.slideDown(1000);
+        }else{
+            console.log('is not bot from top')
         }
 
 
@@ -116,9 +120,20 @@ socket.on("join_room_response", function (payload) {
         uninvite(payload.socket_id)
         var buttonC = makeInviteButton(payload.socket_id);
         $(".socket_" + payload.socket_id + " button").replaceWith(buttonC)
+        
+        //Add kill button to bots
         if (payload.is_bot) {
-            var buttonK = makeKillButton(payload.socket_id);
-            $(".socket_" + payload.socket_id + " button").replaceWith(buttonK)
+            console.log('payload is bot!')
+            var nodeK = $("<div><div>")
+            nodeK.addClass("socket_" + payload.socket_id)
+            nodeK.addClass("bot col-2 text-left")
+            var buttonK = makeKillButton(payload.socket_id)
+            nodeK.append(buttonK)
+            nodeK.hide();
+            $('#players').append(nodeK)
+            nodeK.slideDown(1000);
+        }else{
+            console.log('payload is not bot')
         }
 
         dom_elements.slideDown(1000);
@@ -201,7 +216,7 @@ socket.on("invite_response", function (payload) {
     }
 
     var newNode = makeUninviteButton(payload.socket_id);
-    $('.socket_' + payload.socket_id + ' button').replaceWith(newNode)
+    $('.socket_' + payload.socket_id + ' button.invite').replaceWith(newNode)
 })
 
 /* Invite a player to a game */
@@ -221,7 +236,7 @@ socket.on("invited", function (payload) {
     }
 
     var newNode = makePlayButton(payload.socket_id);
-    $('.socket_' + payload.socket_id + ' button').replaceWith(newNode)
+    $('.socket_' + payload.socket_id + ' button.invite').replaceWith(newNode)
 })
 
 
@@ -235,7 +250,7 @@ socket.on("uninvite_response", function (payload) {
     }
 
     var newNode = makeInviteButton(payload.socket_id);
-    $('.socket_' + payload.socket_id + ' button').replaceWith(newNode)
+    $('.socket_' + payload.socket_id + ' button.uninvite').replaceWith(newNode)
 })
 
 /* Uninvite a player from a game */
@@ -255,7 +270,7 @@ socket.on("uninvited", function (payload) {
     }
 
     var newNode = makeInviteButton(payload.socket_id);
-    $('.socket_' + payload.socket_id + ' button').replaceWith(newNode)
+    $('.socket_' + payload.socket_id + ' button.play').replaceWith(newNode)
 })
 
 /* Accepting Invites */
@@ -268,7 +283,8 @@ socket.on("game_start_response", function (payload) {
     }
 
     var newNode = makePlayButton(payload.socket_id);
-    $('.socket_' + payload.socket_id + ' button').replaceWith(newNode)
+    $('.socket_' + payload.socket_id + ' button.uninvite').replaceWith(newNode)
+    $('.socket_' + payload.socket_id + ' button.play').replaceWith(newNode)
 
     window.location.href = "game.html?username=" + username + "&game_id=" + payload.game_id;
 
@@ -284,11 +300,12 @@ function game_start(who) {
 }
 
 
-function spawn_bot(difficulty, train_method) {
+function spawn_bot(difficulty, ai_type) {
     var payload = {};
     payload.difficulty = difficulty
-    payload.train_method = train_method
-    payload.name = username + "_botRL"
+    payload.ai_type = ai_type
+    payload.train_method = 'none' // TODO remove this from everything? but leave for now
+    payload.username = username + "_bot"
 
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
     socket.emit('spawn_bot', payload)
@@ -321,7 +338,7 @@ socket.on("kill_bot_response", function (payload) {
 
 /* Create an Invite Button */
 function makeInviteButton(socket_id) {
-    var newHTML = "<button type='button' class='btn btn-outline-primary'>Invite</button>"
+    var newHTML = "<button type='button' class='btn btn-outline-primary invite'>Invite</button>"
     var newNode = $(newHTML)
     newNode.click(function () {
         invite(socket_id)
@@ -331,7 +348,7 @@ function makeInviteButton(socket_id) {
 
 /* Create an Uninvite Button */
 function makeUninviteButton(socket_id) {
-    var newHTML = "<button type='button' class='btn btn-info'>Uninvite</button>"
+    var newHTML = "<button type='button' class='btn btn-info uninvite'>Uninvite</button>"
     var newNode = $(newHTML)
     newNode.click(function () {
         uninvite(socket_id)
@@ -341,7 +358,7 @@ function makeUninviteButton(socket_id) {
 
 /* Create a Play Button */
 function makePlayButton(socket_id) {
-    var newHTML = "<button type='button' class='btn btn-success'>Play</button>"
+    var newHTML = "<button type='button' class='btn btn-success play'>Play</button>"
     var newNode = $(newHTML)
     newNode.click(function () {
         game_start(socket_id)
@@ -351,7 +368,7 @@ function makePlayButton(socket_id) {
 
 /* Create a Kill Button */
 function makeKillButton(socket_id) {
-    var newHTML = "<button type='button' class='btn btn-danger'>Kill</button>"
+    var newHTML = "<button type='button' class='btn btn-danger kill'>Kill</button>"
     var newNode = $(newHTML)
     newNode.click(function () {
         kill_bot(socket_id)
@@ -365,6 +382,7 @@ $(function () {
     var payload = {};
     payload.room = chat_room;
     payload.username = username;
+    payload.is_bot = false;
 
     console.log("*** Client Log Message: 'join_room' payload: " + JSON.stringify(payload));
     socket.emit("join_room", payload);

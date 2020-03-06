@@ -107,6 +107,15 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        //Check that payload declares bot/human status
+        var is_bot = payload.is_bot;
+        if ('undefined' === typeof is_bot) {
+            var error_message = 'join_room didn\'t specify a bot/human status, command aborted';
+            log(error_message);
+            socket.emit('join_room_response', { result: 'fail', message: error_message })
+            return;
+        }
+
         //Check that the username is not already in use
         if (playerNames.has(username)) {
             var error_message = 'join_room username already taken'
@@ -121,6 +130,7 @@ io.sockets.on('connection', function (socket) {
         players[socket.id] = {};
         players[socket.id].username = username;
         players[socket.id].room = room;
+        players[socket.id].is_bot = is_bot;
 
         //join the room
         socket.join(room);
@@ -135,21 +145,24 @@ io.sockets.on('connection', function (socket) {
             room: room,
             username: username,
             socket_id: socket.id,
-            is_bot: payload.is_bot,
+            is_bot: is_bot,
             membership: numClients
         };
         io.in(room).emit('join_room_response', success_data)
 
         for (var socket_in_room in roomObject.sockets) {
-            var success_data = {
-                result: 'success',
-                room: room,
-                username: players[socket_in_room].username,
-                socket_id: socket_in_room,
-                membership: numClients
-            };
+            if (username != players[socket_in_room].username) {
+                var success_data = {
+                    result: 'success',
+                    room: room,
+                    username: players[socket_in_room].username,
+                    socket_id: socket_in_room,
+                    is_bot: players[socket_in_room].is_bot,
+                    membership: numClients
+                };
 
-            socket.emit('join_room_response', success_data)
+                socket.emit('join_room_response', success_data)
+            }
         }
 
         log('join_room success')
@@ -625,8 +638,15 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        if (('undefined' === typeof payload.name) || (!payload.name)) {
-            var error_message = 'spawn_bot had no name, command aborted';
+        if (('undefined' === typeof payload.username) || (!payload.username)) {
+            var error_message = 'spawn_bot had no username, command aborted';
+            log(error_message);
+            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
+        if (('undefined' === typeof payload.ai_type) || (!payload.ai_type)) {
+            var error_message = 'spawn_bot had no ai_type, command aborted';
             log(error_message);
             socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
             return;
@@ -646,23 +666,27 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        payload.port = port;
+        spawn_bot(payload)
+
         /** Spawn RL Bot(s) **/
-        switch (payload.train_method) {
-            case "none":
-                spawn_bot(port, "rl", payload.name, payload.difficulty)
+        // switch (payload.train_method) {
+        //     case "none":
+        //         spawn_bot(port, "rl", payload.name, payload.difficulty)
+        //         break;
 
-            case "rl_bot":
-                spawn_bot(port, "rl", payload.name, payload.difficulty)
-                spawn_bot(port, "rl", payload.name + "_trainer", payload.difficulty, "train")
-                break;
+        //     case "rl_bot":
+        //         spawn_bot(port, "rl", payload.name, payload.difficulty)
+        //         spawn_bot(port, "rl", payload.name + "_trainer", payload.difficulty, "train")
+        //         break;
 
-            case "ab_bot":
-                spawn_bot(port, "ab", payload.name, payload.difficulty)
-                break;
+        //     case "ab_bot":
+        //         spawn_bot(port, "ab", payload.name, payload.difficulty)
+        //         break;
 
-            default:
-                break;
-        }
+        //     default:
+        //         break;
+        // }
 
     })
 
@@ -674,21 +698,22 @@ io.sockets.on('connection', function (socket) {
      * @param {string} name 
      * @param {string} role 
      */
-    function spawn_bot(port, difficulty, name, type, role = "play") {
-        let args = [port, name, difficulty]
-        let jar;
+    function spawn_bot(payload) {
+        // function spawn_bot(port, difficulty, name, type, role = "play") {
+        // let args = payload
+        // let jar;
 
         //get the right jar
-        if (type === "ab") {
-            jar = "AB_Bot.jar"
-        } else {
-            args.push(role)
-            jar = "RL_Bot.jar"
-        }
+        // if (type === "ab") {
+        //     // jar = "AB_Bot.jar"
+        // } else {
+        //     // args.push(role)
+        // }
 
         //spawn the bot
+        // TODO describe payload here
         let child = require('child_process').spawn(
-            'java', ['-jar', 'bot_exes/' + jar, args]
+            'java', ['-jar', 'bot_exes/Reversi_Bot.jar', JSON.stringify(payload)]
         );
 
 
@@ -983,7 +1008,9 @@ io.sockets.on('connection', function (socket) {
                 winner: winner
             }
 
+            log('player count in game ' + game_id + ': ' + numClients)
             io.in(game_id).emit('game_over', success_data)
+
 
             /* Delete old games */
             setTimeout(function (id) {

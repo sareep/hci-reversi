@@ -25,7 +25,7 @@ public class GameState {
     public GameState(Boolean my_turn, JSONArray legal_moves){
         this.my_turn = my_turn;
 
-        this.legal_moves = calculateLegalMoves(Reversi_Bot.my_color, legal_moves);
+        this.legal_moves = condenseLegalMoves(Reversi_Bot.my_color, legal_moves);
     }
 
 
@@ -46,7 +46,7 @@ public class GameState {
     }
 
     /********* MOVE-SCREENING FUNCTIONS *********/
-    private ArrayList<String> calculateLegalMoves(String who, JSONArray board){
+    private ArrayList<String> condenseLegalMoves(String who, JSONArray board){
         ArrayList<String> moves = new ArrayList<String>();
 
         for(int row=0;row<8;row++){

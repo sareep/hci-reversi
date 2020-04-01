@@ -667,7 +667,17 @@ io.sockets.on('connection', function (socket) {
         }
 
         payload.port = port;
+        payload.role = 'play'
         spawn_bot(payload)
+
+
+        if(payload.train_method != 'none'){
+            payload.username += "_teacher"
+            payload.ai_type = payload.train_method
+            payload.train_method = 'none'
+            payload.role = 'teach'
+            spawn_bot(payload)
+        }
 
         /** Spawn RL Bot(s) **/
         // switch (payload.train_method) {

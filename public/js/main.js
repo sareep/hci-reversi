@@ -40,7 +40,7 @@ socket.on("log", function (array) {
 
 /* Join Room Actions */
 socket.on("join_room_response", function (payload) {
-    console.log("join response: " + JSON.stringify(payload));
+    console.log("join response: " + payload.result);
     if (payload.result == "fail") {
 
         if (!('undefined' === typeof payload.username) || (payload.username)) {
@@ -300,11 +300,11 @@ function game_start(who) {
 }
 
 
-function spawn_bot(difficulty, ai_type) {
+function spawn_bot(difficulty, ai_type, train_method) {
     var payload = {};
     payload.difficulty = difficulty
     payload.ai_type = ai_type
-    payload.train_method = 'none' // TODO remove this from everything? but leave for now
+    payload.train_method = train_method // TODO remove this from everything? but leave for now
     payload.username = username + "_bot"
 
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));

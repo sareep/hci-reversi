@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import base.minimax.Think;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -65,7 +66,7 @@ public class Reversi_Bot {
 		JSONObject payload = new JSONObject(args[0]);
 
 		// Screen payload
-		String[] req_keys = new String[] { "port", "ai_type", "username", "difficulty" };
+		String[] req_keys = new String[] { "port", "ai_type", "username", "difficulty", "role" };
 		JSONObject eval = validatePayload(payload, req_keys);
 		if (!eval.getString("result").equals("valid")) {
 			// broadcast failure
@@ -75,8 +76,8 @@ public class Reversi_Bot {
 			socket.emit("spawn_bot_response", response);
 
 			// log failure locally
-			err(eval.getString("message"));
-			err("Terminating");
+			Utils.err(eval.getString("message"));
+			Utils.err("Terminating");
 			System.exit(3);
 		}
 
@@ -85,11 +86,11 @@ public class Reversi_Bot {
 		aiType = payload.getString("ai_type");
 		username = payload.getString("username");
 		difficulty = payload.getString("difficulty");
-		/**role = payload.getString("role"); //TODO save for later? once figure out how
-		training will work
-		out("role is " + role);*/
+		role = payload.getString("role");
+		trainee = role.equals("teach") ? username.replace("_teacher", "") : null;
 
-		out("Assigned params");
+
+		Utils.out("Assigned params");
 
 		// set up socket functionality to interact with server
 		socket = IO.socket("http://localhost:" + port);
@@ -101,7 +102,7 @@ public class Reversi_Bot {
 	 * Set up connection to server
 	 */
 	public static void setupSocket() {
-		out("Setting up socket");
+		Utils.out("Setting up socket");
 		
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			
@@ -110,7 +111,7 @@ public class Reversi_Bot {
 			 */
 			@Override
 			public void call(Object... args) {
-				out("Connection success");
+				Utils.out("Connection success");
 				joinRoom(room);
 			}
 
@@ -122,56 +123,61 @@ public class Reversi_Bot {
 			@Override
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
+				// screen payload
+				JSONObject eval = validatePayload(response, new String[]{"result", "username", "room"});
+				if(!eval.getString("result").equals("valid")){
+					Utils.err(eval.getString("message"));
+					return;
+				}
+
+
 				switch (response.getString("result")) {
 
 					// If failed, try again up to MAX_JOIN_ATTEMPTS times then terminate
 					case "fail":
-						err("didn't join room correctly, going to lobby");
-						err(response.getString("message"));
-
-						join_lobby_fail_count++;
-						if (join_lobby_fail_count > MAX_JOIN_ATTEMPTS) {
-							err("Failed to join lobby " + MAX_JOIN_ATTEMPTS + " times, terminating.");
-							System.exit(1);
-						} else {
-							try {
-								TimeUnit.SECONDS.sleep(2);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
+						if(response.getString("username").equals(username) ){
+							Utils.err("Didn't join room correctly, going to lobby");
+							Utils.err(response.getString("message"));
+							
+							join_lobby_fail_count++;
+							if (join_lobby_fail_count > MAX_JOIN_ATTEMPTS) {
+								Utils.err("Failed to join lobby " + MAX_JOIN_ATTEMPTS + " times, terminating.");
+								System.exit(1);
+							} else {
+								try {
+									TimeUnit.SECONDS.sleep(2);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								joinRoom("lobby");
 							}
-							joinRoom("lobby");
 						}
 						break;
 
 					// If succeeded, reset failure count
 					case "success":
 
-						// screen payload
-						JSONObject eval = validatePayload(response, new String[]{"username", "room"});
-						if(!eval.getString("result").equals("valid")){
-							err(eval.getString("message"));
-							break;
-						}
-
+						
 						if (username.equals(response.getString("username"))) {
 							room = response.getString("room");
-							out("Joined room " + room);
+							Utils.out("Joined room " + room);
 							join_lobby_fail_count = 0;
 						}
 
 
 						// TODO come back once training is set up
 						// If role is to train AND room is lobby, invite the trainee to a game
-						// if (role.equals("train") && trainee.equals(response.getString("username"))
-						// && room.equals("lobby")) {
-						// first_invite_time = Instant.now();
-						// invite(trainee); // TODO debug this
-						// }
+						if (role.equals("teach") 
+								&& trainee.equals(response.getString("username"))
+								&& room.equals("lobby")) {
+							first_invite_time = Instant.now();
+							invite(response.getString("socket_id")); // TODO debug this
+						}
 
 						break;
 
 					default:
-						err("Malformed join_room response from server, exiting");
+						Utils.err("Malformed join_room response from server, exiting");
 						System.exit(1);
 						break;
 				}
@@ -184,12 +190,12 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
 				String result = response.getString("result");
-				out("Invitation response: " + result);
+				Utils.out("Invitation response: " + result);
 
 				// If invitation failed, wait 10 seconds and try again for a maximum of 2
 				// minutes
 				if (result.equals("fail")) {
-					err(response.getString("message"));
+					Utils.err(response.getString("message"));
 
 					if (role.equals("train")) {
 						Instant now = Instant.now();
@@ -204,13 +210,13 @@ public class Reversi_Bot {
 								try {
 									TimeUnit.SECONDS.sleep(10);
 								} catch (InterruptedException e) {
-									err(e.getMessage());
+									Utils.err(e.getMessage());
 									e.printStackTrace();
 								}
 								invite(trainee);
 							}
 						} else {
-							err("Trainee could not be invited within 2 minutes, terminating");
+							Utils.err("Trainee could not be invited within 2 minutes, terminating");
 							System.exit(1);
 						}
 					}
@@ -225,14 +231,14 @@ public class Reversi_Bot {
 				JSONObject invitation = (JSONObject) args[0];
 
 				if (invitation.getString("result").equals("fail")) {
-					err(invitation.getString("message"));
+					Utils.err(invitation.getString("message"));
 				} else {
 
 					JSONObject eval = validatePayload(invitation, new String[] { "socket_id", "socket_id" });
 					if (!eval.getString("result").equals("valid")) {
-						err(eval.getString("message"));
+						Utils.err(eval.getString("message"));
 					} else {
-						out("Invited by" + invitation.getString("socket_id"));
+						Utils.out("Invited by" + invitation.getString("socket_id"));
 						JSONObject payload = new JSONObject();
 						payload.put("requested_user", invitation.getString("socket_id"));
 						socket.emit("game_start", payload);
@@ -245,10 +251,10 @@ public class Reversi_Bot {
 			// Join a game room after a game is initialized on the server
 			@Override
 			public void call(Object... args) {
-				out("Game start result: " + ((JSONObject) args[0]).getString("result"));
+				Utils.out("Game start result: " + ((JSONObject) args[0]).getString("result"));
 				JSONObject response = (JSONObject) args[0];
 				if (response.getString("result").equals("fail")) {
-					err(response.getString("message"));
+					Utils.err(response.getString("message"));
 				} else {
 					socket.disconnect();
 					room = response.getString("game_id");
@@ -273,20 +279,20 @@ public class Reversi_Bot {
 			@Override
 			public void call(Object... args) {
 
-				out("Received game update");
+				Utils.out("Received game update");
 				JSONObject payload = (JSONObject) args[0];
 
 				// screen payload
 				JSONObject eval = validatePayload(payload, new String[] { "result", "game" });
 				if (!eval.getString("result").equals("valid")) {
-					err(eval.getString("message"));
+					Utils.err(eval.getString("message"));
 				} else {
 
 					GameState game = prepareTurn((JSONObject) args[0]);
 
 					// don't do anything unless it's your turn
 					if (!game.isMyTurn() || game.isOver()) {
-						out("Not my turn, waiting patiently for the human");
+						Utils.out("Not my turn, waiting patiently for the human");
 					} else {
 						// pick a move
 						String[] move = decideMoveToPlay(game);
@@ -298,7 +304,7 @@ public class Reversi_Bot {
 						play.put("column", Integer.valueOf(move[1]));
 						play.put("color", my_color);
 
-						out("Playing token at " + move[0] + "," + move[1]);
+						Utils.out("Playing token at " + move[0] + "," + move[1]);
 
 						// send move to server
 						socket.emit("play_token", play);
@@ -314,9 +320,9 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
 				String result = response.getString("result");
-				out("Play token result: " + result);
+				Utils.out("Play token result: " + result);
 				if (result.equals("fail")) {
-					err(response.getString("message"));
+					Utils.err(response.getString("message"));
 				}
 			}
 
@@ -326,7 +332,7 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				// Get winner
 				JSONObject response = (JSONObject) args[0];
-				out("Game over! Winner is " + response.getString("winner"));
+				Utils.out("Game over! Winner is " + response.getString("winner"));
 				socket.disconnect();
 
 				// Real bots rejoin lobby, trainers exit
@@ -346,7 +352,7 @@ public class Reversi_Bot {
 			@Override
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
-				out("Exiting. Terminated by " + response.getString("terminator"));
+				Utils.out("Exiting. Terminated by " + response.getString("terminator"));
 				System.exit(0);
 			}
 
@@ -354,12 +360,12 @@ public class Reversi_Bot {
 
 			@Override
 			public void call(Object... args) {
-				out("Disconnected");
+				Utils.out("Disconnected");
 			}
 
 		});
 
-		out("Connecting to socket");
+		Utils.out("Connecting to socket");
 		socket.connect();
 	}
 
@@ -376,7 +382,7 @@ public class Reversi_Bot {
 	public static GameState prepareTurn(JSONObject payload) {
 		// Check for good update
 		if (payload.getString("result").equals("fail")) {
-			err(payload.getString("message"));
+			Utils.err(payload.getString("message"));
 			System.exit(1);
 		}
 		JSONObject game = (JSONObject) payload.get("game");
@@ -384,7 +390,7 @@ public class Reversi_Bot {
 		// Check for good board
 		JSONArray board = (JSONArray) game.get("board");
 		if (board == null) {
-			err("Internal server error: received malformed board update");
+			Utils.err("Internal server error: received malformed board update");
 			System.exit(1);
 		}
 
@@ -398,7 +404,7 @@ public class Reversi_Bot {
 			my_color = "white";
 			opp_color = "black";
 		} else {
-			err("Something weird happened with colors");
+			Utils.err("Something weird happened with colors");
 			System.exit(1);
 		}
 
@@ -412,25 +418,28 @@ public class Reversi_Bot {
 	 * @param game
 	 * @return
 	 */
-	public static String[] decideMoveToPlay(GameState game) {
-
+	public static String[] decideMoveToPlay(GameState state) {
+		String[] move;
 		switch (aiType) {
-			// TODO call appropriate thinking
-
+			
 			// case "ab":
-			// break;
-
+			// 	move = Think.run(state);
+			// 	break;
+			
+			// TODO figure out how to call rl's thinking
 			// case "rl":
 			// break;
 
 			default:
-				return game.getRandomMove().split(",");
+				move = state.getRandomMove().split(",");
 		}
+
+		return move;
 
 	}
 
 
-	/**** General Functions ****/
+	/**** General Socket.io Functions ****/
 
 	/**
 	 * Validates that the values to specified keys are not null in a JSONObject
@@ -479,50 +488,13 @@ public class Reversi_Bot {
 
 	/**
 	 * Invite a player to a game (usually bot-to-bot)
-	 * @param trainee
+	 * @param requested_user
 	 */
-	public static void invite(String trainee) {
+	public static void invite(String requested_user) {
 		JSONObject payload = new JSONObject();
-		payload.put("requested_user", trainee);
+		payload.put("requested_user", requested_user);
 		socket.emit("invite", payload);
 		latest_invite_time = Instant.now();
-	}
-
-
-	/**** Print shortcuts ****/
-	
-	public static void out(String message) {
-		print(message, "out");
-	}
-	
-	public static void err(String message) {
-		print(message, "err");
-	}
-	
-	/**
-	 * Title each message for easier debugging on server
-	 * @param message
-	 * @param type
-	 */
-	public static void print(String message, String type) {
-		String output = "**" + username + ": ";
-		if (port == 8080) {
-			message += "\n";
-		}
-
-		switch (type) {
-			case "out":
-				output += message;
-				System.out.print(output);
-				break;
-			case "err":
-				output += "ERROR: ";
-				output += message;
-				System.err.print(output);
-				break;
-			default:
-				break;
-		}
 	}
 
 }

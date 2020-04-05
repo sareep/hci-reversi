@@ -1,11 +1,15 @@
 package base.reinforcement_learning;
 
-import base.GameState;
+import base.Utils;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 
+/**
+ * Represents an entire game/set of games
+ */
+@SuppressWarnings("unused")
 public class RL_Env implements Environment {
 
     private RL_State currentObservationState;
@@ -37,9 +41,7 @@ public class RL_Env implements Environment {
 
     @Override
     public void resetEnvironment() {
-        board = GameState.newBoard();
-        
-
+        board = Utils.newBoard();
     }
 
 }

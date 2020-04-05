@@ -3,46 +3,39 @@ package base.reinforcement_learning;
 import java.util.ArrayList;
 import java.util.List;
 
-import base.GameState;
+import base.Utils;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import burlap.mdp.core.state.StateUtilities;
-import burlap.mdp.core.state.UnknownKeyException;
-import burlap.mdp.core.state.annotations.DeepCopyState;
-import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import burlap.mdp.singleagent.model.statemodel.SampleStateModel;
 
-@SuppressWarnings("unused")
 public class MoveActionType implements ActionType {
 
-  public static String BASE_ACTION_NAME = "moveAction";
+    public static String BASE_ACTION_NAME = "moveAction";
 
-  @Override
-  public String typeName() {
-    return BASE_ACTION_NAME;
-  }
-
-  @Override
-  public List<Action> allApplicableActions(State state) {
-    List<Action> applicableActions = new ArrayList<>();
-    RL_State revState = (RL_State) state;
-
-    String gameStatus = (String) revState.get(RL_State.VAR_GAME_STATUS);
-    if (gameStatus.equals(RL_State.GAME_STATUS_IN_PROGRESS)) {
-      String gameBoard = (String) revState.get(RL_State.VAR_GAME_BOARD);
-// TODO create a legal_move calculator that takes in a board and player
-      ArrayList<String> moves = null;// = GameState.getLegalMoves();
-      for (int i = 0; i < moves.size(); i++) {
-        applicableActions.add(new MoveAction(moves.get(i)));
-      }
+    @Override
+    public String typeName() {
+        return BASE_ACTION_NAME;
     }
-    return applicableActions;
-  }
 
-  @Override
-  public Action associatedAction(String strRep) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public List<Action> allApplicableActions(State state) {
+        List<Action> applicableActions = new ArrayList<>();
+        RL_State reversiState = (RL_State) state;
+
+        String gameStatus = (String) reversiState.get(RL_State.VAR_GAME_STATUS);
+        if (gameStatus.equals(RL_State.GAME_STATUS_IN_PROGRESS)) {
+            String[][] moves = Utils.calculateLegalMoves(reversiState.whoseTurn, reversiState.gameBoard);
+            for (int i = 0; i < moves.length; i++) {
+                for (int j = 0; j < moves.length; j++) {
+                    applicableActions.add(new MoveAction(i, j));
+                }
+            }
+        }
+        return applicableActions;
+    }
+
+    @Override
+    public Action associatedAction(String strRep) {
+        return new MoveAction(Integer.parseInt(strRep.substring(0, 1)), Integer.parseInt(strRep.substring(1)));
+    }
 }

@@ -33,9 +33,9 @@ import io.socket.emitter.Emitter;
  * Hello world!
  *
  */
-public class Reversi_Bot {
+public class Reversi_Bot extends Utils {
 
-	public static final int MAX_GAMES = 2;// TODO figure out why bot dies after 2 games
+	public static final int MAX_GAMES = 2;
 	public static final int MAX_JOIN_ATTEMPTS = 5;
 
 	public static String aiType = null; // ab or rl
@@ -56,6 +56,8 @@ public class Reversi_Bot {
 	public static String difficulty = null;
 	public static String my_color = null;
 	public static String opp_color = null;
+	public static String my_token = null;
+	public static String opp_token = null;
 
 	/**
 	 * Main method run on spawn from server
@@ -78,8 +80,8 @@ public class Reversi_Bot {
 			socket.emit("spawn_bot_response", response);
 
 			// log failure locally
-			Utils.err(eval.getString("message"));
-			Utils.err("Terminating");
+			err(eval.getString("message"));
+			err("Terminating");
 			System.exit(3);
 		}
 
@@ -92,7 +94,7 @@ public class Reversi_Bot {
 		trainee = role.equals("teach") ? username.replace("_teacher", "") : null;
 
 
-		Utils.out("Assigned params");
+		out("Assigned params");
 
 		// set up socket functionality to interact with server
 		Options opts = new Options();
@@ -107,7 +109,7 @@ public class Reversi_Bot {
 	 * Set up connection to server
 	 */
 	public static void setupSocket() {
-		Utils.out("Setting up socket");
+		out("Setting up socket");
 		
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			
@@ -116,7 +118,7 @@ public class Reversi_Bot {
 			 */
 			@Override
 			public void call(Object... args) {
-				Utils.out("Connection success");
+				out("Connection success");
 				joinRoom(room);
 			}
 
@@ -131,7 +133,7 @@ public class Reversi_Bot {
 				// screen payload
 				JSONObject eval = validatePayload(response, new String[]{"result", "username", "room"});
 				if(!eval.getString("result").equals("valid")){
-					Utils.err(eval.getString("message"));
+					err(eval.getString("message"));
 					return;
 				}
 
@@ -141,12 +143,12 @@ public class Reversi_Bot {
 					// If failed, try again up to MAX_JOIN_ATTEMPTS times then terminate
 					case "fail":
 						if(response.getString("username").equals(username) ){
-							Utils.err("Didn't join room correctly, going to lobby");
-							Utils.err(response.getString("message"));
+							err("Didn't join room correctly, going to lobby");
+							err(response.getString("message"));
 							
 							join_lobby_fail_count++;
 							if (join_lobby_fail_count > MAX_JOIN_ATTEMPTS) {
-								Utils.err("Failed to join lobby " + MAX_JOIN_ATTEMPTS + " times, terminating.");
+								err("Failed to join lobby " + MAX_JOIN_ATTEMPTS + " times, terminating.");
 								System.exit(1);
 							} else {
 								try {
@@ -165,7 +167,7 @@ public class Reversi_Bot {
 						
 						if (username.equals(response.getString("username"))) {
 							room = response.getString("room");
-							Utils.out("Joined room " + room);
+							out("Joined room " + room);
 							join_lobby_fail_count = 0;
 						}
 
@@ -182,7 +184,7 @@ public class Reversi_Bot {
 						break;
 
 					default:
-						Utils.err("Malformed join_room response from server, exiting");
+						err("Malformed join_room response from server, exiting");
 						System.exit(1);
 						break;
 				}
@@ -195,12 +197,12 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
 				String result = response.getString("result");
-				Utils.out("Invitation response: " + result);
+				out("Invitation response: " + result);
 
 				// If invitation failed, wait 10 seconds and try again for a maximum of 2
 				// minutes
 				if (result.equals("fail")) {
-					Utils.err(response.getString("message"));
+					err(response.getString("message"));
 
 					if (role.equals("train")) {
 						Instant now = Instant.now();
@@ -215,13 +217,13 @@ public class Reversi_Bot {
 								try {
 									TimeUnit.SECONDS.sleep(10);
 								} catch (InterruptedException e) {
-									Utils.err(e.getMessage());
+									err(e.getMessage());
 									e.printStackTrace();
 								}
 								invite(trainee);
 							}
 						} else {
-							Utils.err("Trainee could not be invited within 2 minutes, terminating");
+							err("Trainee could not be invited within 2 minutes, terminating");
 							System.exit(1);
 						}
 					}
@@ -236,14 +238,14 @@ public class Reversi_Bot {
 				JSONObject invitation = (JSONObject) args[0];
 
 				if (invitation.getString("result").equals("fail")) {
-					Utils.err(invitation.getString("message"));
+					err(invitation.getString("message"));
 				} else {
 
 					JSONObject eval = validatePayload(invitation, new String[] { "socket_id", "socket_id" });
 					if (!eval.getString("result").equals("valid")) {
-						Utils.err(eval.getString("message"));
+						err(eval.getString("message"));
 					} else {
-						Utils.out("Invited by" + invitation.getString("socket_id"));
+						out("Invited by" + invitation.getString("socket_id"));
 						JSONObject payload = new JSONObject();
 						payload.put("requested_user", invitation.getString("socket_id"));
 						socket.emit("game_start", payload);
@@ -256,10 +258,10 @@ public class Reversi_Bot {
 			// Join a game room after a game is initialized on the server
 			@Override
 			public void call(Object... args) {
-				Utils.out("Game start result: " + ((JSONObject) args[0]).getString("result"));
+				out("Game start result: " + ((JSONObject) args[0]).getString("result"));
 				JSONObject response = (JSONObject) args[0];
 				if (response.getString("result").equals("fail")) {
-					Utils.err(response.getString("message"));
+					err(response.getString("message"));
 				} else {
 					socket.disconnect();
 					room = response.getString("game_id");
@@ -284,23 +286,23 @@ public class Reversi_Bot {
 			@Override
 			public void call(Object... args) {
 
-				Utils.out("Received game update");
+				out("Received game update");
 				JSONObject payload = (JSONObject) args[0];
 
 				// screen payload
 				JSONObject eval = validatePayload(payload, new String[] { "result", "game" });
 				if (!eval.getString("result").equals("valid")) {
-					Utils.err(eval.getString("message"));
+					err(eval.getString("message"));
 				} else {
 
-					GameState game = prepareTurn((JSONObject) args[0]);
+					GameState state = prepareTurn((JSONObject) args[0]);
 
 					// don't do anything unless it's your turn
-					if (!game.isMyTurn() || game.isOver()) {
-						Utils.out("Not my turn, waiting patiently for the human");
+					if (!state.isMyTurn() || state.getGameStatus().equals(GAME_STATUS_TERMINAL)) {
+						out("Not my turn, waiting patiently for the human");
 					} else {
 						// pick a move
-						String[] move = decideMoveToPlay(game);
+						String[] move = decideMoveToPlay(state);
 
 						// jsonify the move
 						JSONObject play = new JSONObject() {
@@ -309,7 +311,7 @@ public class Reversi_Bot {
 						play.put("column", Integer.valueOf(move[1]));
 						play.put("color", my_color);
 
-						Utils.out("Playing token at " + move[0] + "," + move[1]);
+						out("Playing token at " + move[0] + "," + move[1]);
 
 						// send move to server
 						socket.emit("play_token", play);
@@ -325,9 +327,9 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
 				String result = response.getString("result");
-				Utils.out("Play token result: " + result);
+				out("Play token result: " + result);
 				if (result.equals("fail")) {
-					Utils.err(response.getString("message"));
+					err(response.getString("message"));
 				}
 			}
 
@@ -337,7 +339,7 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				// Get winner
 				JSONObject response = (JSONObject) args[0];
-				Utils.out("Game over! Winner is " + response.getString("winner"));
+				out("Game over! Winner is " + response.getString("winner"));
 				socket.disconnect();
 
 				// Real bots rejoin lobby, trainers exit
@@ -357,7 +359,7 @@ public class Reversi_Bot {
 			@Override
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
-				Utils.out("Exiting. Terminated by " + response.getString("terminator"));
+				out("Exiting. Terminated by " + response.getString("terminator"));
 				System.exit(0);
 			}
 
@@ -367,12 +369,12 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				JSONObject data = (JSONObject) args[0];
 				String reason = data.getString("disconnect"); //or "reason"?
-				Utils.out("Disconnected. Reason: " + reason); 
+				out("Disconnected. Reason: " + reason); 
 			}
 
 		});
 
-		Utils.out("Connecting to socket");
+		out("Connecting to socket");
 		socket.connect();
 	}
 
@@ -389,7 +391,7 @@ public class Reversi_Bot {
 	public static GameState prepareTurn(JSONObject payload) {
 		// Check for good update
 		if (payload.getString("result").equals("fail")) {
-			Utils.err(payload.getString("message"));
+			err(payload.getString("message"));
 			System.exit(1);
 		}
 		JSONObject game = (JSONObject) payload.get("game");
@@ -397,7 +399,7 @@ public class Reversi_Bot {
 		// Check for good board
 		JSONArray board = (JSONArray) game.get("board");
 		if (board == null) {
-			Utils.err("Internal server error: received malformed board update");
+			err("Internal server error: received malformed board update");
 			System.exit(1);
 		}
 
@@ -405,13 +407,17 @@ public class Reversi_Bot {
 		JSONObject white = (JSONObject) game.get("player_white");
 		JSONObject black = (JSONObject) game.get("player_black");
 		if (socket.id().equals(black.getString("socket"))) {
-			my_color = "black";
-			opp_color = "white";
+			my_color = BLACK;
+			my_token = BLACK_TILE;
+			opp_color = WHITE;
+			opp_token = WHITE_TILE;
 		} else if (socket.id().equals(white.getString("socket"))) {
-			my_color = "white";
-			opp_color = "black";
+			my_color = WHITE;
+			my_token = WHITE_TILE;
+			opp_color = BLACK;
+			opp_token = BLACK_TILE;
 		} else {
-			Utils.err("Something weird happened with colors");
+			err("Something weird happened with colors");
 			System.exit(1);
 		}
 
@@ -430,13 +436,12 @@ public class Reversi_Bot {
 		switch (aiType) {
 			
 			// case "ab":
-			// 	move = Think.run(state);
-			// 	break;
+			// 		move = MM_Think.run(state);
+			// 		break;
 			
-			// TODO figure out how to call rl's thinking
 			// case "rl":
-				
-			// 	break;
+			// 		move = RL_Think.getMove();
+			// 		break;
 
 			default:
 				move = state.getRandomMove().split(",");

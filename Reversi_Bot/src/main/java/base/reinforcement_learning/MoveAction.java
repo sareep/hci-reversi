@@ -4,13 +4,13 @@ import burlap.mdp.core.action.Action;
 
 public class MoveAction implements Action {
     private String actionId; // effectively Char[]: [row,col]
-    private String row;
-    private String col;
+    private int row;
+    private int col;
 
-    public MoveAction(String actionId) {
-        this.actionId = actionId;
-        this.row = actionId.substring(0, 1);
-        this.col = actionId.substring(1);
+    public MoveAction(int row, int col) {
+        this.actionId = row + "" + col;
+        this.row = row;
+        this.col = col;
     }
 
     @Override
@@ -20,14 +20,14 @@ public class MoveAction implements Action {
 
     @Override
     public Action copy() {
-        return new MoveAction(actionId);
+        return new MoveAction(row, col);
     }
 
-    public String getRow() {
+    public int getRow() {
         return row;
     }
 
-    public String getCol() {
+    public int getCol() {
         return col;
     }
 }

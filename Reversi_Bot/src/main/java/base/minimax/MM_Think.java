@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import base.GameState;
 import base.Reversi_Bot;
 
-public class Think {
+@SuppressWarnings("unused")
+public class MM_Think {
 
     private Boolean my_turn = false;
     private State best_move;

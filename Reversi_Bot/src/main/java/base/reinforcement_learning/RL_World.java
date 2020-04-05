@@ -1,20 +1,17 @@
 package base.reinforcement_learning;
 
+import base.Utils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.auxiliary.DomainGenerator;
-import burlap.mdp.core.Domain;
-import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.SADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 
 /**
- * BurlapWorld
+ * just visualizer? or does it do anything useful
  */
-@SuppressWarnings("unused")
-
 public class RL_World implements DomainGenerator {
 
 
@@ -33,11 +30,10 @@ public class RL_World implements DomainGenerator {
         LearningAgent agent = new QLearning(dom, .9 /* ? */, hashFact, 0.0 /* ? */, 1.0 /* ? */);
         RL_Env env = new RL_Env();
 
-        String outputPath = "learning_episodes/";
         for (int i = 0; i < maxGames; i++) {
             Episode e = agent.runLearningEpisode(env);
 
-            e.write(outputPath + "ql_" + i);
+            e.write(Utils.PATH_TO_EPISODES + "ql_" + i);
 
             // reset environment for next learning episode
             env.resetEnvironment();
@@ -47,7 +43,6 @@ public class RL_World implements DomainGenerator {
     @Override
     public SADomain generateDomain() {
         SADomain domain = new SADomain();
-
         domain.addActionType(new MoveActionType());
         return domain;
     }

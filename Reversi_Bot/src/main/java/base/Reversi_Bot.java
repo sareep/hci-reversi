@@ -23,9 +23,10 @@ import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import base.minimax.Think;
+// import base.minimax.Think;
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.client.IO.Options;
 import io.socket.emitter.Emitter;
 
 /**
@@ -40,6 +41,7 @@ public class Reversi_Bot {
 	public static String aiType = null; // ab or rl
 
 	public static int gamesPlayed = 0;
+	public static int reconnect_count = 0;
 	public static int join_lobby_fail_count = 0;
 	public static Instant first_invite_time = null;
 	public static Instant latest_invite_time = null;
@@ -93,6 +95,9 @@ public class Reversi_Bot {
 		Utils.out("Assigned params");
 
 		// set up socket functionality to interact with server
+		Options opts = new Options();
+		opts.forceNew = true;
+		// opts.
 		socket = IO.socket("http://localhost:" + port);
 		setupSocket();
 	}
@@ -360,7 +365,9 @@ public class Reversi_Bot {
 
 			@Override
 			public void call(Object... args) {
-				Utils.out("Disconnected");
+				JSONObject data = (JSONObject) args[0];
+				String reason = data.getString("disconnect"); //or "reason"?
+				Utils.out("Disconnected. Reason: " + reason); 
 			}
 
 		});
@@ -428,7 +435,8 @@ public class Reversi_Bot {
 			
 			// TODO figure out how to call rl's thinking
 			// case "rl":
-			// break;
+				
+			// 	break;
 
 			default:
 				move = state.getRandomMove().split(",");

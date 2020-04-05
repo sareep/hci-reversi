@@ -29,11 +29,12 @@ public class RL_State implements MutableState {
   public static char WHITE_TILE = 'w';
   public static char EMPTY_TILE = ' ';
 
+
   public String gameBoard;
   public String gameStatus;
 
   private final static List<Object> keys = Arrays.<Object>asList(VAR_GAME_BOARD, VAR_GAME_STATUS);
-  public static final Object GAME_STATUS_IN_PROGRESS = null;
+  public static final String GAME_STATUS_IN_PROGRESS = "I";
   public static final int NUM_CELLS = 0;
   public static final char EMPTY = 0;
 

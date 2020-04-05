@@ -3,6 +3,7 @@ package base.reinforcement_learning;
 import java.util.ArrayList;
 import java.util.List;
 
+import base.GameState;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
@@ -23,11 +24,6 @@ public class MoveActionType implements ActionType {
   }
 
   @Override
-  public Action associatedAction(String strRep) {
-    return new MoveAction(0); // TODO: what's this
-  }
-
-  @Override
   public List<Action> allApplicableActions(State state) {
     List<Action> applicableActions = new ArrayList<>();
     RL_State revState = (RL_State) state;
@@ -35,12 +31,18 @@ public class MoveActionType implements ActionType {
     String gameStatus = (String) revState.get(RL_State.VAR_GAME_STATUS);
     if (gameStatus.equals(RL_State.GAME_STATUS_IN_PROGRESS)) {
       String gameBoard = (String) revState.get(RL_State.VAR_GAME_BOARD);
-      for (int i = 0; i < RL_State.NUM_CELLS; i++) {
-        if (gameBoard.charAt(i) == RL_State.EMPTY) {
-          applicableActions.add(new MoveAction(i));
-        }
+// TODO create a legal_move calculator that takes in a board and player
+      ArrayList<String> moves = null;// = GameState.getLegalMoves();
+      for (int i = 0; i < moves.size(); i++) {
+        applicableActions.add(new MoveAction(moves.get(i)));
       }
     }
     return applicableActions;
+  }
+
+  @Override
+  public Action associatedAction(String strRep) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

@@ -33,7 +33,7 @@ public class RL_World implements DomainGenerator {
         LearningAgent agent = new QLearning(dom, .9 /* ? */, hashFact, 0.0 /* ? */, 1.0 /* ? */);
         RL_Env env = new RL_Env();
 
-        String outputPath = "output/";
+        String outputPath = "learning_episodes/";
         for (int i = 0; i < maxGames; i++) {
             Episode e = agent.runLearningEpisode(env);
 

@@ -1,5 +1,6 @@
 package base.reinforcement_learning;
 
+import base.GameState;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
@@ -8,6 +9,10 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 public class RL_Env implements Environment {
 
     private RL_State currentObservationState;
+    private String gameState;
+    private String[][] board;
+    private double reward;
+    private boolean isTerminal;
 
     @Override
     public State currentObservation() {
@@ -16,24 +21,24 @@ public class RL_Env implements Environment {
 
     @Override
     public EnvironmentOutcome executeAction(Action action) {
+
         return null;
     }
 
     @Override
     public double lastReward() {
-        // TODO Auto-generated method stub
-        return 0;
+        return reward;
     }
 
     @Override
     public boolean isInTerminalState() {
-        // TODO Auto-generated method stub
-        return false;
+        return isTerminal;
     }
 
     @Override
     public void resetEnvironment() {
-        // TODO Auto-generated method stub
+        board = GameState.newBoard();
+        
 
     }
 

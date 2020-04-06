@@ -9,17 +9,17 @@ import java.util.ArrayList;
 
 import base.GameState;
 import base.Reversi_Bot;
-
+// TODO get rid of all the state stuff, only keep logic
 @SuppressWarnings("unused")
 public class MM_Think {
 
     private Boolean my_turn = false;
-    private State best_move;
-    private ArrayList<State> legal_moves = new ArrayList<State>();
+    private MM_State best_move;
+    private ArrayList<MM_State> legal_moves = new ArrayList<MM_State>();
     private String[][] original_board = new String[][]{};
     private Instant endTime;
     private static GameState origin;
-    private State origin_s;
+    private MM_State origin_s;
 
 
     public static String[] run(GameState origin_state) {
@@ -32,10 +32,10 @@ public class MM_Think {
      * dlsReturn
      */
     public class DLSReturn {
-        public State move;
+        public MM_State move;
         public boolean remaining;
 
-        public DLSReturn(State m, boolean b){
+        public DLSReturn(MM_State m, boolean b){
             move = m;
             remaining = b;
         }
@@ -54,7 +54,7 @@ public class MM_Think {
     /**
      * @return the best_move
      */
-    public State getBestMove() {
+    public MM_State getBestMove() {
         return best_move;
     }
     
@@ -72,14 +72,14 @@ public class MM_Think {
     /**
      * @return the legal_moves
      */
-    public ArrayList<State> getLegalMoves() {
-        return new ArrayList<State>(this.legal_moves);
+    public ArrayList<MM_State> getLegalMoves() {
+        return new ArrayList<MM_State>(this.legal_moves);
     }
 
 
     /********* LOGIC FUNCTIONS *********/
 
-    public State getMove(String difficulty) {
+    public MM_State getMove(String difficulty) {
 
         ArrayList<String> moveList;
         int timeLimit = 0;
@@ -116,7 +116,7 @@ public class MM_Think {
      * 
      * @return a random legal move
      */
-	private State getRandomMove() {
+	private MM_State getRandomMove() {
         return this.legal_moves.get((int) (Math.random() * (legal_moves.size())));
     }
 
@@ -124,7 +124,7 @@ public class MM_Think {
 
 
     //stuff from wikipedia
-    private State IDDFS() {
+    private MM_State IDDFS() {
         DLSReturn returnVal = new DLSReturn(null, false);
         for (int depth = 0; depth < 100000; depth++) {
             if(Instant.now().isBefore(endTime)){
@@ -144,7 +144,7 @@ public class MM_Think {
         return returnVal.move;
     }
 
-    private DLSReturn DLS(State move, int depth) {
+    private DLSReturn DLS(MM_State move, int depth) {
         if(depth == 0){
             if(isTerminalMove(move) && (winner(move) == Reversi_Bot.my_color)){
                 return new DLSReturn(move, true);
@@ -163,13 +163,13 @@ public class MM_Think {
     }
 
     // TODO what if this was in the state? then it can stop calculating once it finds 1 move
-    private boolean isTerminalMove(State m) {
+    private boolean isTerminalMove(MM_State m) {
         // ArrayList<State> moves_available = calculateLegalMoves(m.next_player.substring(0, 1), m.getResultingBoard()); // TODO change getResulting board to something that exists. create a new state?
         // return (moves_available.size() == 0);
         return true;
     }
 
-    private String winner(State m) {
+    private String winner(MM_State m) {
         String winner = "";
         int black = m.black_count;
         int white = m.white_count;

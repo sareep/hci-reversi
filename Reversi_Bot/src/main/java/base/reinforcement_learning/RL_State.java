@@ -5,8 +5,9 @@ import java.util.List;
 
 import base.GameState;
 import burlap.mdp.core.state.MutableState;
+import burlap.mdp.core.state.StateUtilities;
 import burlap.mdp.core.state.UnknownKeyException;
-import burlap.mdp.core.state.annotations.DeepCopyState;
+import burlap.mdp.core.state.annotations.ShallowCopyState;
 
 /**
  * Represents the state of the game - board, whose turn, etc
@@ -15,38 +16,32 @@ import burlap.mdp.core.state.annotations.DeepCopyState;
  * https://github.com/JavaFXpert/tic-tac-toe-rl
  */
 
-@DeepCopyState
+@ShallowCopyState
 public class RL_State extends GameState implements MutableState {
 
-    public final static String VAR_GAME_BOARD = "gameBoard";
+    public final static String VAR_GAME_BOARD = "board";
     public final static String VAR_GAME_STATUS = "gameStatus";
-
-    public static char BLACK_TILE = 'b';
-    public static char WHITE_TILE = 'w';
-    public static char EMPTY_TILE = ' ';
-
-    public String[][] gameBoard;
-    public String gameStatus;
-    public String whoseTurn;
-
     private final static List<Object> keys = Arrays.<Object>asList(VAR_GAME_BOARD, VAR_GAME_STATUS);
-    public static final String GAME_STATUS_IN_PROGRESS = "I";
-    public static final int NUM_CELLS = 0;
-    public static final char EMPTY = 0;
 
     public RL_State() {
-
+        super();
     }
 
-    public RL_State(String[][] gameBoard, String gameStatus) {
-        this.gameBoard = gameBoard;
-        this.gameStatus = gameStatus;
+    public RL_State(String[][] board, String next_player) {
+        this.board = board;
+        this.next_player = next_player;
+        countTiles();
+        this.move_list = calculateLegalMoves(next_player, board);
+    }
+
+    public RL_State(GameState parent, int row, int col, String who) {
+        super(parent, row, col, who);
     }
 
     @Override
     public MutableState set(Object variableKey, Object value) {
         if (variableKey.equals(VAR_GAME_BOARD)) {
-            this.gameBoard = (String[][]) value;
+            this.board = (String[][]) value;
         } else if (variableKey.equals(VAR_GAME_STATUS)) {
             this.gameStatus = (String) value;
         } else {
@@ -63,7 +58,7 @@ public class RL_State extends GameState implements MutableState {
     @Override
     public Object get(Object variableKey) {
         if (variableKey.equals(VAR_GAME_BOARD)) {
-            return this.gameBoard;
+            return this.board;
         } else if (variableKey.equals(VAR_GAME_STATUS)) {
             return this.gameStatus;
         }
@@ -72,6 +67,11 @@ public class RL_State extends GameState implements MutableState {
 
     @Override
     public RL_State copy() {
-        return new RL_State(gameBoard, gameStatus);
+        return new RL_State(board, next_player);
+    }
+
+    @Override
+    public String toString() {
+        return StateUtilities.stateToString(this);
     }
 }

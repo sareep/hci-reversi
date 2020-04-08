@@ -659,25 +659,25 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        if (('undefined' === typeof payload.train_method) || (!payload.train_method)) {
-            var error_message = 'spawn_bot had no train_method, command aborted';
+        if (('undefined' === typeof payload.role) || (!payload.role)) {
+            var error_message = 'spawn_bot had no role, command aborted';
             log(error_message);
             socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
             return;
         }
 
         payload.port = port;
-        payload.role = 'play'
+        // payload.role = 'play'
         spawn_bot(payload)
 
 
-        if(payload.train_method != 'none'){
-            payload.username += "_teacher"
-            payload.ai_type = payload.train_method
-            payload.train_method = 'none'
-            payload.role = 'teach'
-            spawn_bot(payload)
-        }
+        // if(payload.train_method != 'none'){
+        //     payload.username += "_teacher"
+        //     payload.ai_type = payload.train_method
+        //     payload.train_method = 'none'
+        //     payload.role = 'teach'
+        //     spawn_bot(payload)
+        // }
 
         /** Spawn RL Bot(s) **/
         // switch (payload.train_method) {
@@ -723,7 +723,7 @@ io.sockets.on('connection', function (socket) {
         //spawn the bot
         // TODO describe payload here
         let child = require('child_process').spawn(
-            'java', ['-jar', 'bot_exes/Reversi_Bot.jar', JSON.stringify(payload)]
+            'java', ['-jar', 'bot/exes/Reversi_Bot.jar', JSON.stringify(payload)]
         );
 
 

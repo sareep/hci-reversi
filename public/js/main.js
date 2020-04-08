@@ -300,11 +300,11 @@ function game_start(who) {
 }
 
 
-function spawn_bot(difficulty, ai_type, train_method) {
+function spawn_bot(difficulty, ai_type, role) {
     var payload = {};
     payload.difficulty = difficulty
     payload.ai_type = ai_type
-    payload.train_method = train_method // TODO remove this from everything? but leave for now
+    payload.role = role // TODO remove this from everything? but leave for now
     payload.username = username + "_bot"
 
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));

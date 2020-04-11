@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import base.GameState;
 import base.Utils;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.EpsilonGreedy;
@@ -80,7 +79,7 @@ public class Learner extends MDPSolver implements LearningAgent, QProvider {
         LearningAgent agent = new Learner(domain, gamma, hashFact, qinit, learningRate, epsilon, numEpsToRun);
 
         SimulatedEnvironment env = new SimulatedEnvironment(domain, initialState);
-        // RL_Env env = new RL_Env(domain, initialState); TODO get this one working so you can reward winners
+        // RL_Env env = new RL_Env(domain, initialState); TODO get this one working so you can reward winners?
 
         // TODO empty out the old episodes first?
         for (int i = 0; i < numEpsToRun; i++) {
@@ -108,7 +107,6 @@ public class Learner extends MDPSolver implements LearningAgent, QProvider {
         // behave until a terminal state or max steps is reached
         RL_State curState = (RL_State) env.currentObservation();
         int steps = 0;
-        // TODO this shouldn't need my check for G_S_T
         while (!env.isInTerminalState() && (steps < maxSteps || maxSteps == -1)) {
 
             // select an action

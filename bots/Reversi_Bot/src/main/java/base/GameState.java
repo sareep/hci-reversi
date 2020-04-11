@@ -5,6 +5,8 @@ package base;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+
 public class GameState extends Utils {
 
     public static final String GAME_STATUS_TERMINAL = "terminal";
@@ -16,7 +18,8 @@ public class GameState extends Utils {
     public String next_player;
     public String previous_player;
     public String gameStatus = GAME_STATUS_CONTINUING;
-    public ArrayList<String> move_list = new ArrayList<String>();
+    public ArrayList<String> move_list = new ArrayList<String>(); // List of row-column pairs, i.e. "12" for row 1, col
+                                                                  // 2
 
     public int black_count = 0;
     public int white_count = 0;
@@ -43,6 +46,33 @@ public class GameState extends Utils {
         next_player = BLACK;
     }
 
+    /**
+     * For creating States from server game_update payloads
+     * 
+     * @param board the board given by the server
+     */
+    public GameState(String[][] board, String next_player) {
+        this.next_player = next_player;
+
+        this.board = board;
+
+        // Count tiles for each player
+        countTiles();
+
+        // Find what moves are available
+        move_list = calculateLegalMoves(next_player, board);
+
+        gameStatus = move_list.size() > 0 ? GAME_STATUS_CONTINUING : GAME_STATUS_TERMINAL;
+    }
+
+    /**
+     * For creating child states from a parent where who plays at board[row][col]
+     * 
+     * @param parent
+     * @param row
+     * @param col
+     * @param who
+     */
     public GameState(GameState parent, int row, int col, String who) {
         // Screen transition
         if (!parent.next_player.equals(who)) {
@@ -147,7 +177,24 @@ public class GameState extends Utils {
      * @return a random legal move
      */
     public String getRandomMove() {
+        out("Playing Random");
         return this.move_list.get((int) (Math.random() * (move_list.size())));
+    }
+
+    /**
+     * Converts a 2D JSONArray into a String[][]
+     */
+    public static String[][] JSONArrToStringArr(JSONArray oldArr) {
+        int length = oldArr.length();
+        // this assumes square board
+        String[][] newArr = new String[length][length];
+        for (int i = 0; i < oldArr.length(); i++) {
+            JSONArray row = oldArr.getJSONArray(i);
+            for (int j = 0; j < row.length(); j++) {
+                newArr[i][j] = row.getString(j);
+            }
+        }
+        return newArr;
     }
 
     /**** Game Logic ****/
@@ -227,27 +274,6 @@ public class GameState extends Utils {
     }
 
     /**
-     * Check if a certain line begins and ends with who's color
-     * 
-     * @param who   player placing a token
-     * @param dr    north/south change
-     * @param dc    east/west change
-     * @param r     row of location being evaluated
-     * @param c     column of location being evaluated
-     * @param board the original board being evaluated
-     * @return
-     */
-    static Boolean check_line_match(String who, int dr, int dc, int r, int c, String[][] board) {
-        if (board[r][c].equals(who)) {
-            return true;
-        } else if ((r + dr < 0) || (r + dr > 7) || (c + dc < 0) || (c + dc > 7) || board[r][c].equals(" ")) {
-            return false;
-        } else {
-            return check_line_match(who, dr, dc, r + dr, c + dc, board);
-        }
-    }
-
-    /**
      * Find if a certain (r,c) is a legal move
      * 
      * @param who   player placing a token
@@ -278,6 +304,27 @@ public class GameState extends Utils {
         }
 
         return check_line_match(who, dr, dc, r + dr + dr, c + dc + dc, board);
+    }
+
+    /**
+     * Check if a certain line begins and ends with who's color
+     * 
+     * @param who   player placing a token
+     * @param dr    north/south change
+     * @param dc    east/west change
+     * @param r     row of location being evaluated
+     * @param c     column of location being evaluated
+     * @param board the original board being evaluated
+     * @return
+     */
+    static Boolean check_line_match(String who, int dr, int dc, int r, int c, String[][] board) {
+        if (board[r][c].equals(who)) {
+            return true;
+        } else if ((r + dr < 0) || (r + dr > 7) || (c + dc < 0) || (c + dc > 7) || board[r][c].equals(" ")) {
+            return false;
+        } else {
+            return check_line_match(who, dr, dc, r + dr, c + dc, board);
+        }
     }
 
 }

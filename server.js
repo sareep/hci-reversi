@@ -666,6 +666,13 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        if (('undefined' === typeof payload.opponent) || (!payload.opponent)) {
+            var error_message = 'spawn_bot had no opponent, command aborted';
+            log(error_message);
+            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
         payload.port = port;
         // payload.role = 'play'
         spawn_bot(payload)
@@ -723,9 +730,8 @@ io.sockets.on('connection', function (socket) {
         //spawn the bot
         // TODO describe payload here
         let child = require('child_process').spawn(
-            'java', ['-jar', 'bot/exes/Reversi_Bot.jar', JSON.stringify(payload)]
+            "java", ["-jar", "bots/exes/Reversi_Bot.jar", JSON.stringify(payload)]
         );
-
 
         //handle I/O
         child.stdout.on('data', function (data) {

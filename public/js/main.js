@@ -300,13 +300,36 @@ function game_start(who) {
 }
 
 
-function spawn_bot(difficulty, ai_type, role) {
+function spawn_bot(ai_type, role) {
     var payload = {};
-    payload.difficulty = difficulty
+    payload.difficulty = $("#difficulty").children("option:selected").val();
     payload.ai_type = ai_type
     payload.role = role // TODO remove this from everything? but leave for now
     payload.username = username + "_bot"
+    payload.opponent = "none";
 
+    console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
+    socket.emit('spawn_bot', payload)
+}
+
+function spawn_bots(difficulty1, ai_type1, difficulty2, ai_type2) {
+    var payload = {};
+    username1 = username + "_bot2bot_"+ai_type1
+    username2 = username + "_bot2bot_"+ai_type2
+
+    payload.username = username1
+    payload.difficulty = difficulty1
+    payload.ai_type = ai_type1
+    payload.role = 'play'
+    payload.opponent = username2
+    console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
+    socket.emit('spawn_bot', payload)
+    
+    payload.username = username2
+    payload.difficulty = difficulty2
+    payload.ai_type = ai_type2
+    payload.role = 'invite'
+    payload.opponent = username1
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
     socket.emit('spawn_bot', payload)
 }

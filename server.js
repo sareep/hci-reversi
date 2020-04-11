@@ -659,15 +659,32 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        if (('undefined' === typeof payload.train_method) || (!payload.train_method)) {
-            var error_message = 'spawn_bot had no train_method, command aborted';
+        if (('undefined' === typeof payload.role) || (!payload.role)) {
+            var error_message = 'spawn_bot had no role, command aborted';
+            log(error_message);
+            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+            return;
+        }
+
+        if (('undefined' === typeof payload.opponent) || (!payload.opponent)) {
+            var error_message = 'spawn_bot had no opponent, command aborted';
             log(error_message);
             socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
             return;
         }
 
         payload.port = port;
+        // payload.role = 'play'
         spawn_bot(payload)
+
+
+        // if(payload.train_method != 'none'){
+        //     payload.username += "_teacher"
+        //     payload.ai_type = payload.train_method
+        //     payload.train_method = 'none'
+        //     payload.role = 'teach'
+        //     spawn_bot(payload)
+        // }
 
         /** Spawn RL Bot(s) **/
         // switch (payload.train_method) {
@@ -713,17 +730,16 @@ io.sockets.on('connection', function (socket) {
         //spawn the bot
         // TODO describe payload here
         let child = require('child_process').spawn(
-            'java', ['-jar', 'bot_exes/Reversi_Bot.jar', JSON.stringify(payload)]
+            "java", ["-jar", "bots/exes/Reversi_Bot.jar", JSON.stringify(payload)]
         );
-
 
         //handle I/O
         child.stdout.on('data', function (data) {
-            console.log(data.toString());
+            log(data.toString());
         });
 
         child.stderr.on('data', function (data) {
-            console.log(data.toString());
+            log(data.toString());
         });
     }
 
@@ -731,6 +747,7 @@ io.sockets.on('connection', function (socket) {
 
 
     socket.on('kill_bot', function (payload) {
+        log('received kill order')
         /** Screen the payload **/
         if (('undefined' === typeof payload) || (!payload)) {
             var error_message = 'kill_bot had no payload, command aborted';
@@ -753,6 +770,7 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        log("Killing a bot: "+ JSON.stringify(payload))
         /** Kill The Bot**/
         payload_out = {}
         payload_out.terminator = payload.terminator
@@ -905,7 +923,7 @@ io.sockets.on('connection', function (socket) {
 
         if (('undefined' === typeof games[game_id]) || !games[game_id]) {
             /* No game yet, make it */
-            console.log('no game exists. creating ' + game_id + ' for ' + socket.id);
+            log('no game exists. creating ' + game_id + ' for ' + socket.id);
             games[game_id] = create_new_game();
         }
 
@@ -916,7 +934,7 @@ io.sockets.on('connection', function (socket) {
             roomObj = io.sockets.adapter.rooms[game_id]
             numClients = roomObj.length;
             if (numClients > 2) {
-                console.log('Too many clients in room: ' + game_id + ' #: ' + numClients)
+                log('Too many clients in room: ' + game_id + ' #: ' + numClients)
                 if (games[game_id].player_white.socket == roomObj.sockets[0]) {
                     games[game_id].player_white.socket = '';
                     games[game_id].player_white.username = '';
@@ -934,7 +952,7 @@ io.sockets.on('connection', function (socket) {
 
         /* Assign this socket a color */
         if ((games[game_id].player_white.socket != socket.id) && (games[game_id].player_black.socket != socket.id)) {
-            console.log('Player isn\'t assigned a color: ' + players[socket.id].username)
+            log('Player isn\'t assigned a color: ' + players[socket.id].username)
             if (games[game_id].player_black.socket != '' && games[game_id].player_white.socket != '') {
                 games[game_id].player_black.socket = ''
                 games[game_id].player_black.username = ''
@@ -946,7 +964,7 @@ io.sockets.on('connection', function (socket) {
         /* Assign White */
         if (games[game_id].player_white.socket == '') {
             if (games[game_id].player_black.socket != socket.id) {
-                console.log('Assigning ' + players[socket.id].username + ' white')
+                log('Assigning ' + players[socket.id].username + ' white')
                 games[game_id].player_white.socket = socket.id
                 games[game_id].player_white.username = players[socket.id].username
             }
@@ -955,7 +973,7 @@ io.sockets.on('connection', function (socket) {
         /* Assign Black */
         if (games[game_id].player_black.socket == '') {
             if (games[game_id].player_white.socket != socket.id) {
-                console.log('Assigning ' + players[socket.id].username + ' black')
+                log('Assigning ' + players[socket.id].username + ' black')
                 games[game_id].player_black.socket = socket.id
                 games[game_id].player_black.username = players[socket.id].username
             }

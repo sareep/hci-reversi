@@ -40,7 +40,7 @@ socket.on("log", function (array) {
 
 /* Join Room Actions */
 socket.on("join_room_response", function (payload) {
-    console.log("join response: " + JSON.stringify(payload));
+    console.log("join response: " + payload.result);
     if (payload.result == "fail") {
 
         if (!('undefined' === typeof payload.username) || (payload.username)) {
@@ -98,7 +98,6 @@ socket.on("join_room_response", function (payload) {
         //Add kill button to bots
         console.log('payload.is_bot value: ');console.log(payload.is_bot)
         if (payload.is_bot) {
-            console.log('is bot from top')
             var nodeK = $("<div><div>")
             nodeK.addClass("socket_" + payload.socket_id)
             nodeK.addClass("bot col-2 text-left")
@@ -123,7 +122,6 @@ socket.on("join_room_response", function (payload) {
         
         //Add kill button to bots
         if (payload.is_bot) {
-            console.log('payload is bot!')
             var nodeK = $("<div><div>")
             nodeK.addClass("socket_" + payload.socket_id)
             nodeK.addClass("bot col-2 text-left")
@@ -132,8 +130,6 @@ socket.on("join_room_response", function (payload) {
             nodeK.hide();
             $('#players').append(nodeK)
             nodeK.slideDown(1000);
-        }else{
-            console.log('payload is not bot')
         }
 
         dom_elements.slideDown(1000);
@@ -300,13 +296,36 @@ function game_start(who) {
 }
 
 
-function spawn_bot(difficulty, ai_type) {
+function spawn_bot(ai_type, role) {
     var payload = {};
-    payload.difficulty = difficulty
+    payload.difficulty = $("#difficulty").children("option:selected").val();
     payload.ai_type = ai_type
-    payload.train_method = 'none' // TODO remove this from everything? but leave for now
-    payload.username = username + "_bot"
+    payload.role = role // TODO remove this from everything? but leave for now
+    payload.username = username + "_bot_" + ai_type + "_" + difficulty
+    payload.opponent = "none";
 
+    console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
+    socket.emit('spawn_bot', payload)
+}
+
+function spawn_bots(difficulty1, ai_type1, difficulty2, ai_type2) {
+    var payload = {};
+    username1 = username + "_b2b_"+ai_type1 + "_" + difficulty1
+    username2 = username + "_b2b_"+ai_type2 + "_" + difficulty2
+
+    payload.username = username1
+    payload.difficulty = difficulty1
+    payload.ai_type = ai_type1
+    payload.role = 'play'
+    payload.opponent = username2
+    console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
+    socket.emit('spawn_bot', payload)
+    
+    payload.username = username2
+    payload.difficulty = difficulty2
+    payload.ai_type = ai_type2
+    payload.role = 'invite'
+    payload.opponent = username1
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
     socket.emit('spawn_bot', payload)
 }

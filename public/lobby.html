@@ -18,12 +18,48 @@
     <div class="alerts"></div>
 
     <div class="container-fluid text-center">
+
+      <!--Heading-->
       <div class="row bg-primary mb-2">
         <div class="col">
           <h2>Lobby</h2>
         </div>
       </div>
 
+      <!--Bot Buttons-->
+      <div class="row">
+        <div class="col">
+          <div id="spawns">
+            <label for="difficulty">Bot difficulty:</label>
+            <select id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <!-- <option value="hard">Hard</option> -->
+            </select>
+
+            <button class="btn btn-default btn-secondary" onclick="spawn_bot('mm', 'play'); return false;">
+              Spawn Minimax Bot
+            </button>
+            <button type="button" class="btn btn-default btn-secondary" onclick="spawn_bot('rl', 'play'); return false;">
+              Spawn RL Bot
+            </button>
+            <button type="button" class="btn btn-default btn-secondary" onclick="spawn_bot('rl', 'learn'); return false;">
+              Train RL Bot
+            </button>
+            <button class="btn btn-default btn-secondary" onclick="spawn_bots('medium', 'mm', 'easy', 'rl'); return false;">
+              Make 2 Bots Play
+            </button>
+            <!-- <button class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl_bot'); return false;">
+              Spawn AB Bot
+            </button>
+            <button class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl_bot'); return false;">
+              Spawn AB Trained Bot
+            </button> -->
+          </div>
+        </div>
+      </div>
+
+      <!--Player List-->
       <div class="row align-items-end" id="players">
         <div class="col-9 text-left ">
           <h3>Players</h3>
@@ -32,6 +68,7 @@
         <div class="col-3"></div>
       </div>
       
+      <!--Send Message-->
       <div class="row">
         <div class="col text-center">
           <h3>Messages</h3>
@@ -45,28 +82,10 @@
         </div>
       </div>
 
+      <!--Messages-->
       <div class="row">
         <div class="col">
           <div id="messages"></div>
-        </div>
-      </div>
-      
-      <div class="row">
-        <div class="col">
-          <div id="spawns">
-            <button type="button" class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl'); return false;">
-              Spawn Easy RL Bot
-            </button>
-            <!-- <button class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl_bot'); return false;">
-              Spawn RL Trained Bot
-            </button>
-            <button class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl_bot'); return false;">
-              Spawn AB Bot
-            </button>
-            <button class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl_bot'); return false;">
-              Spawn AB Trained Bot
-            </button> -->
-          </div>
         </div>
       </div>
 

@@ -1,0 +1,1104 @@
+!!burlap.behavior.singleagent.Episode
+actionSequence:
+- !!burlap.mdp.core.action.SimpleAction {name: b32}
+- !!burlap.mdp.core.action.SimpleAction {name: w31}
+- !!burlap.mdp.core.action.SimpleAction {name: b30}
+- !!burlap.mdp.core.action.SimpleAction {name: w35}
+- !!burlap.mdp.core.action.SimpleAction {name: b23}
+- !!burlap.mdp.core.action.SimpleAction {name: w53}
+- !!burlap.mdp.core.action.SimpleAction {name: b54}
+- !!burlap.mdp.core.action.SimpleAction {name: w13}
+- !!burlap.mdp.core.action.SimpleAction {name: b45}
+- !!burlap.mdp.core.action.SimpleAction {name: w24}
+- !!burlap.mdp.core.action.SimpleAction {name: b52}
+- !!burlap.mdp.core.action.SimpleAction {name: w46}
+- !!burlap.mdp.core.action.SimpleAction {name: b47}
+- !!burlap.mdp.core.action.SimpleAction {name: w64}
+- !!burlap.mdp.core.action.SimpleAction {name: b03}
+- !!burlap.mdp.core.action.SimpleAction {name: w51}
+- !!burlap.mdp.core.action.SimpleAction {name: b14}
+- !!burlap.mdp.core.action.SimpleAction {name: w22}
+- !!burlap.mdp.core.action.SimpleAction {name: b63}
+- !!burlap.mdp.core.action.SimpleAction {name: w73}
+- !!burlap.mdp.core.action.SimpleAction {name: b50}
+- !!burlap.mdp.core.action.SimpleAction {name: w15}
+- !!burlap.mdp.core.action.SimpleAction {name: b12}
+- !!burlap.mdp.core.action.SimpleAction {name: w42}
+- !!burlap.mdp.core.action.SimpleAction {name: b65}
+- !!burlap.mdp.core.action.SimpleAction {name: w55}
+- !!burlap.mdp.core.action.SimpleAction {name: b41}
+- !!burlap.mdp.core.action.SimpleAction {name: w02}
+- !!burlap.mdp.core.action.SimpleAction {name: b16}
+- !!burlap.mdp.core.action.SimpleAction {name: w75}
+- !!burlap.mdp.core.action.SimpleAction {name: b25}
+- !!burlap.mdp.core.action.SimpleAction {name: w62}
+- !!burlap.mdp.core.action.SimpleAction {name: b72}
+- !!burlap.mdp.core.action.SimpleAction {name: w26}
+- !!burlap.mdp.core.action.SimpleAction {name: b36}
+- !!burlap.mdp.core.action.SimpleAction {name: w71}
+- !!burlap.mdp.core.action.SimpleAction {name: b01}
+- !!burlap.mdp.core.action.SimpleAction {name: w37}
+- !!burlap.mdp.core.action.SimpleAction {name: b27}
+- !!burlap.mdp.core.action.SimpleAction {name: w40}
+- !!burlap.mdp.core.action.SimpleAction {name: b21}
+- !!burlap.mdp.core.action.SimpleAction {name: w66}
+- !!burlap.mdp.core.action.SimpleAction {name: b67}
+- !!burlap.mdp.core.action.SimpleAction {name: w20}
+- !!burlap.mdp.core.action.SimpleAction {name: b10}
+- !!burlap.mdp.core.action.SimpleAction {name: w57}
+- !!burlap.mdp.core.action.SimpleAction {name: b61}
+- !!burlap.mdp.core.action.SimpleAction {name: w11}
+- !!burlap.mdp.core.action.SimpleAction {name: b56}
+- !!burlap.mdp.core.action.SimpleAction {name: w77}
+- !!burlap.mdp.core.action.SimpleAction {name: b74}
+- !!burlap.mdp.core.action.SimpleAction {name: w00}
+- !!burlap.mdp.core.action.SimpleAction {name: b70}
+- !!burlap.mdp.core.action.SimpleAction {name: w17}
+- !!burlap.mdp.core.action.SimpleAction {name: b07}
+- !!burlap.mdp.core.action.SimpleAction {name: w60}
+- !!burlap.mdp.core.action.SimpleAction {name: b05}
+- !!burlap.mdp.core.action.SimpleAction {name: w04}
+- !!burlap.mdp.core.action.SimpleAction {name: b76}
+- !!burlap.mdp.core.action.SimpleAction {name: w06}
+rewardSequence: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+stateSequence:
+- !!base.reinforcement_learning.RL_State
+  black_count: 4
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['23', '32', '45', '54']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 4
+- !!base.reinforcement_learning.RL_State
+  black_count: 3
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['24', '31', '35', '42', '53']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 2
+- !!base.reinforcement_learning.RL_State
+  black_count: 3
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['23', '30', '45', '54']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 3
+- !!base.reinforcement_learning.RL_State
+  black_count: 4
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['24', '35', '42', '53']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 3
+- !!base.reinforcement_learning.RL_State
+  black_count: 4
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['23', '36', '45', '54']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 4
+- !!base.reinforcement_learning.RL_State
+  black_count: 5
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['13', '24', '42', '53']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 4
+- !!base.reinforcement_learning.RL_State
+  black_count: 5
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['36', '45', '54', '63']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 5
+- !!base.reinforcement_learning.RL_State
+  black_count: 6
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['13', '24', '42', '55', '64']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 5
+- !!base.reinforcement_learning.RL_State
+  black_count: 6
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['03', '36', '45', '52', '63']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 6
+- !!base.reinforcement_learning.RL_State
+  black_count: 7
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['24', '42', '46', '55', '64']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 6
+- !!base.reinforcement_learning.RL_State
+  black_count: 7
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['03', '14', '25', '36', '52', '63']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 7
+- !!base.reinforcement_learning.RL_State
+  black_count: 8
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['22', '42', '46', '51', '55', '64']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 7
+- !!base.reinforcement_learning.RL_State
+  black_count: 8
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, ' ']
+  - [' ', ' ', b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['03', '14', '25', '36', '47', '63']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 8
+- !!base.reinforcement_learning.RL_State
+  black_count: 9
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', ' ', b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['22', '42', '51', '55', '64']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 8
+- !!base.reinforcement_learning.RL_State
+  black_count: 9
+  board:
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', ' ', b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['03', '14', '25', '36', '63', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 9
+- !!base.reinforcement_learning.RL_State
+  black_count: 10
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', ' ', b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['22', '42', '51', '55']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 9
+- !!base.reinforcement_learning.RL_State
+  black_count: 10
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['14', '25', '36', '50', '63', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 10
+- !!base.reinforcement_learning.RL_State
+  black_count: 11
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['04', '15', '22', '42', '55']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 10
+- !!base.reinforcement_learning.RL_State
+  black_count: 11
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['12', '21', '25', '36', '50', '63', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 11
+- !!base.reinforcement_learning.RL_State
+  black_count: 12
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['04', '15', '42', '55', '62', '73']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 11
+- !!base.reinforcement_learning.RL_State
+  black_count: 12
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [' ', w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['12', '21', '25', '36', '50', '65', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 12
+- !!base.reinforcement_learning.RL_State
+  black_count: 13
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, ' ', ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [b, w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['04', '15', '42', '55', '62']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 12
+- !!base.reinforcement_learning.RL_State
+  black_count: 13
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [b, w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['12', '16', '21', '25', '36', '65', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 13
+- !!base.reinforcement_learning.RL_State
+  black_count: 14
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, w, b]
+  - [b, w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['02', '04', '11', '42', '55', '62']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 13
+- !!base.reinforcement_learning.RL_State
+  black_count: 14
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [b, w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, ' ', ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['16', '21', '25', '36', '41', '65', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 14
+- !!base.reinforcement_learning.RL_State
+  black_count: 15
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [b, w, b, w, b, ' ', ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['02', '04', '11', '55', '62', '66']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 14
+- !!base.reinforcement_learning.RL_State
+  black_count: 15
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['16', '21', '25', '36', '41', '56', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 15
+- !!base.reinforcement_learning.RL_State
+  black_count: 16
+  board:
+  - [' ', ' ', ' ', b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['02', '04', '11', '40', '62', '66', '75']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 15
+- !!base.reinforcement_learning.RL_State
+  black_count: 16
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['01', '16', '21', '25', '36', '56', '61', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 16
+- !!base.reinforcement_learning.RL_State
+  black_count: 17
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', ' ', ' ', ' ']
+  gameStatus: continuing
+  move_list: ['04', '11', '17', '40', '62', '66', '75']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 16
+- !!base.reinforcement_learning.RL_State
+  black_count: 17
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, ' ', ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['01', '21', '25', '36', '56', '61', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 17
+- !!base.reinforcement_learning.RL_State
+  black_count: 18
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', ' ', b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['04', '11', '17', '26', '40', '62', '66']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 17
+- !!base.reinforcement_learning.RL_State
+  black_count: 18
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', ' ', ' ', w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['01', '05', '21', '36', '56', '61', '72', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 18
+- !!base.reinforcement_learning.RL_State
+  black_count: 19
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', ' ', b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['04', '11', '17', '26', '40', '66', '71']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 18
+- !!base.reinforcement_learning.RL_State
+  black_count: 19
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, w, ' ']
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', ' ', b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['01', '05', '21', '27', '36', '56', '61', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 19
+- !!base.reinforcement_learning.RL_State
+  black_count: 20
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, w, ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', ' ', b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['04', '06', '11', '17', '37', '40', '66', '71']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 19
+- !!base.reinforcement_learning.RL_State
+  black_count: 20
+  board:
+  - [' ', ' ', w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, w, ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['01', '05', '21', '27', '56', '61', '70', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 20
+- !!base.reinforcement_learning.RL_State
+  black_count: 21
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, w, ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '11', '17', '37', '40', '66']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 20
+- !!base.reinforcement_learning.RL_State
+  black_count: 21
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, w, ' ']
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['05', '21', '27', '56', '61', '70', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 21
+- !!base.reinforcement_learning.RL_State
+  black_count: 22
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '11', '17', '40', '57', '66']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 21
+- !!base.reinforcement_learning.RL_State
+  black_count: 22
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['05', '21', '56', '61', '70', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 22
+- !!base.reinforcement_learning.RL_State
+  black_count: 23
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, ' ', ' ']
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '11', '17', '20', '57', '60', '66']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 22
+- !!base.reinforcement_learning.RL_State
+  black_count: 23
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, w, ' ']
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['05', '56', '61', '67', '70', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 23
+- !!base.reinforcement_learning.RL_State
+  black_count: 24
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '11', '17', '20', '57', '60']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 23
+- !!base.reinforcement_learning.RL_State
+  black_count: 24
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [' ', ' ', b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['05', '10', '56', '61', '70', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 24
+- !!base.reinforcement_learning.RL_State
+  black_count: 25
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [b, ' ', b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', ' ']
+  - [' ', ' ', w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '11', '17', '57', '60']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 24
+- !!base.reinforcement_learning.RL_State
+  black_count: 25
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [b, ' ', b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  - [' ', ' ', w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['05', '56', '61', '70', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 25
+- !!base.reinforcement_learning.RL_State
+  black_count: 26
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [b, ' ', b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  - [' ', b, w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '11', '17', '60', '77']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 25
+- !!base.reinforcement_learning.RL_State
+  black_count: 26
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  - [' ', b, w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['05', '56', '70', '74']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 26
+- !!base.reinforcement_learning.RL_State
+  black_count: 27
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', ' ']
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '17', '60', '77']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 26
+- !!base.reinforcement_learning.RL_State
+  black_count: 27
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [' ', w, b, w, ' ', w, ' ', w]
+  gameStatus: continuing
+  move_list: ['05', '70', '74', '76']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 27
+- !!base.reinforcement_learning.RL_State
+  black_count: 28
+  board:
+  - [' ', b, w, b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [' ', w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['00', '04', '06', '17', '60']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 27
+- !!base.reinforcement_learning.RL_State
+  black_count: 28
+  board:
+  - [w, b, w, b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [' ', w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['05', '70', '76']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 28
+- !!base.reinforcement_learning.RL_State
+  black_count: 29
+  board:
+  - [w, b, w, b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, b, ' ']
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['04', '06', '17', '60']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 28
+- !!base.reinforcement_learning.RL_State
+  black_count: 29
+  board:
+  - [w, b, w, b, ' ', ' ', ' ', ' ']
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['05', '07', '76']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 29
+- !!base.reinforcement_learning.RL_State
+  black_count: 30
+  board:
+  - [w, b, w, b, ' ', ' ', ' ', b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [' ', b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['04', '06', '60']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 29
+- !!base.reinforcement_learning.RL_State
+  black_count: 30
+  board:
+  - [w, b, w, b, ' ', ' ', ' ', b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['05', '76']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 30
+- !!base.reinforcement_learning.RL_State
+  black_count: 31
+  board:
+  - [w, b, w, b, ' ', b, ' ', b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['04', '06']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 30
+- !!base.reinforcement_learning.RL_State
+  black_count: 31
+  board:
+  - [w, b, w, b, w, b, ' ', b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, ' ', w]
+  gameStatus: continuing
+  move_list: ['76']
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 31
+- !!base.reinforcement_learning.RL_State
+  black_count: 32
+  board:
+  - [w, b, w, b, w, b, ' ', b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  gameStatus: continuing
+  move_list: ['06']
+  next_player: w
+  previous_player: null
+  utility: 0
+  white_count: 31
+- !!base.reinforcement_learning.RL_State
+  black_count: 32
+  board:
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  - [w, b, w, b, w, b, w, b]
+  - [b, w, b, w, b, w, b, w]
+  gameStatus: terminal
+  move_list: []
+  next_player: b
+  previous_player: null
+  utility: 0
+  white_count: 32

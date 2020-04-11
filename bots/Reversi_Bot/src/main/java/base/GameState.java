@@ -177,7 +177,6 @@ public class GameState extends Utils {
      * @return a random legal move
      */
     public String getRandomMove() {
-        out("Playing Random");
         return this.move_list.get((int) (Math.random() * (move_list.size())));
     }
 
@@ -231,7 +230,7 @@ public class GameState extends Utils {
 
     private boolean flip_line(String who, int dr, int dc, int r, int c, String[][] board) {
 
-        if ((r + dr < 0) || (r + dr > 7) || (c + dc < 0) || (c + dc > 7) || (board[r + dr][c + dc] == " ")) {
+        if ((r + dr < 0) || (r + dr > 7) || (c + dc < 0) || (c + dc > 7) || (board[r + dr][c + dc].equals(" "))) {
             return false;
         }
 

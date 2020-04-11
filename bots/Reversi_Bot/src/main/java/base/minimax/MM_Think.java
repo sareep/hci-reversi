@@ -24,12 +24,13 @@ public class MM_Think {
 
     public static String[] run(GameState origin_state) {
         origin = (MM_State) origin_state;
-        
+
         String[] best_move;
         // int timeLimit = 0;
 
         switch (Reversi_Bot.difficulty) {
             case "easy":
+                Utils.out("Playing Random");
                 best_move = origin.getRandomMove().split("");
                 break;
 
@@ -38,6 +39,7 @@ public class MM_Think {
                 Utils.out("Playing Greedy");
                 best_move = simpleGreedyFirst(origin);
                 // timeLimit = 2;
+                break;
 
             case "hard":
                 // if (timeLimit == 0) {
@@ -47,6 +49,7 @@ public class MM_Think {
                 // IDDFS();
 
             default:
+                Utils.out("Playing Random");
                 best_move = origin.getRandomMove().split("");
         }
 
@@ -66,7 +69,7 @@ public class MM_Think {
             int originalCount = origin.getScore(Reversi_Bot.my_color);
             int newCount = child.getScore(Reversi_Bot.my_color);
             int tilesFlipped = newCount - originalCount;
-            if(tilesFlipped > greediestCount){
+            if (tilesFlipped > greediestCount) {
                 greediestCount = tilesFlipped;
                 greediestMove = move;
             }

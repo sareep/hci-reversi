@@ -112,7 +112,7 @@ public class Reversi_Bot {
 			System.exit(0);
 		}
 
-		if (role.equals("invite")) {
+		if (opponent_bot != null) {
 			max_games = 1;
 		}
 
@@ -310,8 +310,10 @@ public class Reversi_Bot {
 
 					// don't do anything unless it's your turn
 					if (!state.isMyTurn()) {
-						Utils.out("Not my turn, waiting patiently for the human");
+						Utils.out("Not my turn, waiting patiently for the opponent");
 					} else if (state.getGameStatus().equals(GameState.GAME_STATUS_TERMINAL)) {
+					} else if (state.move_list.size() <= 0){
+						Utils.out("No moves available, waiting for next update");
 					} else {
 						// pick a move
 						String[] move = decideMoveToPlay(state);
@@ -326,7 +328,7 @@ public class Reversi_Bot {
 						Utils.out("Playing token: " + move[0] + "," + move[1]);
 
 						// send move to server
-						if (Instant.now().isBefore(green_light_to_move)) {
+						if (opponent_bot == null && Instant.now().isBefore(green_light_to_move)) {
 							try {
 								TimeUnit.MILLISECONDS
 										.sleep(Instant.now().until(green_light_to_move, ChronoUnit.MILLIS));
@@ -358,20 +360,15 @@ public class Reversi_Bot {
 				// Get winner
 				JSONObject response = (JSONObject) args[0];
 				Utils.out("Game over! Winner is " + response.getString("winner"));
-				socket.disconnect();
-
+				
 				gamesPlayed++;
-				if (role.equals("invite") && (gamesPlayed >= max_games)) {
-					Utils.out("Bot vs Bot session over! Shutting down myself and opponent.");
-
-					JSONObject payload = new JSONObject();
-					payload.put("to_kill", opponent_bot);
-					payload.put("terminator", username);
-					socket.emit("kill_bot", payload);
-
+				if (gamesPlayed >= max_games) {
+					Utils.out("Reached max games! Shutting down.");
+					
 					System.exit(0);
 				}
-
+				
+				socket.disconnect();
 				room = "lobby";
 				// joinRoom(room);
 				socket.connect();

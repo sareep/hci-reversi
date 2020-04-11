@@ -7,11 +7,11 @@ import base.GameState;
 
 public class MM_State extends GameState {
 
-    public MM_State(){
+    public MM_State() {
         super();
     }
 
-        /**
+    /**
      * For creating States from server game_update payloads
      * 
      * @param board the board given by the server
@@ -30,20 +30,20 @@ public class MM_State extends GameState {
         gameStatus = move_list.size() > 0 ? GAME_STATUS_CONTINUING : GAME_STATUS_TERMINAL;
     }
 
-    public MM_State(MM_State parent, int row, int col, String who){
+    public MM_State(MM_State parent, int row, int col, String who) {
         super(parent, row, col, who);
     }
 
-    public int getScore(String who){
-        if(who.equals(MM_State.BLACK)){
+    public int getScore(String who) {
+        if (who.equals(MM_State.BLACK)) {
             return this.black_count;
-        }else if(who.equals(MM_State.WHITE)){
+        } else if (who.equals(MM_State.WHITE)) {
             return this.white_count;
-        }else{
+        } else {
             err("Bad color: " + who);
             System.exit(1);
             return -1;
-        }   
+        }
     }
-    
+
 }

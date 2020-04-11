@@ -98,7 +98,6 @@ socket.on("join_room_response", function (payload) {
         //Add kill button to bots
         console.log('payload.is_bot value: ');console.log(payload.is_bot)
         if (payload.is_bot) {
-            console.log('is bot from top')
             var nodeK = $("<div><div>")
             nodeK.addClass("socket_" + payload.socket_id)
             nodeK.addClass("bot col-2 text-left")
@@ -123,7 +122,6 @@ socket.on("join_room_response", function (payload) {
         
         //Add kill button to bots
         if (payload.is_bot) {
-            console.log('payload is bot!')
             var nodeK = $("<div><div>")
             nodeK.addClass("socket_" + payload.socket_id)
             nodeK.addClass("bot col-2 text-left")
@@ -132,8 +130,6 @@ socket.on("join_room_response", function (payload) {
             nodeK.hide();
             $('#players').append(nodeK)
             nodeK.slideDown(1000);
-        }else{
-            console.log('payload is not bot')
         }
 
         dom_elements.slideDown(1000);
@@ -305,7 +301,7 @@ function spawn_bot(ai_type, role) {
     payload.difficulty = $("#difficulty").children("option:selected").val();
     payload.ai_type = ai_type
     payload.role = role // TODO remove this from everything? but leave for now
-    payload.username = username + "_bot"
+    payload.username = username + "_bot_" + ai_type + "_" + difficulty
     payload.opponent = "none";
 
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
@@ -314,8 +310,8 @@ function spawn_bot(ai_type, role) {
 
 function spawn_bots(difficulty1, ai_type1, difficulty2, ai_type2) {
     var payload = {};
-    username1 = username + "_bot2bot_"+ai_type1
-    username2 = username + "_bot2bot_"+ai_type2
+    username1 = username + "_b2b_"+ai_type1 + "_" + difficulty1
+    username2 = username + "_b2b_"+ai_type2 + "_" + difficulty2
 
     payload.username = username1
     payload.difficulty = difficulty1

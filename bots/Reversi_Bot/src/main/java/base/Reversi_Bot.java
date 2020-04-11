@@ -75,8 +75,6 @@ public class Reversi_Bot {
 	 * @throws URISyntaxException
 	 */
 	public static void main(String[] args) throws URISyntaxException {
-		// Learner.run(difficulty);
-		// System.exit(0);
 
 		JSONObject payload = new JSONObject(args[0]);
 
@@ -109,6 +107,7 @@ public class Reversi_Bot {
 
 		if (role.equals("learn")) {
 			Learner.run(difficulty);
+			Utils.out("Shutting down");
 			System.exit(0);
 		}
 

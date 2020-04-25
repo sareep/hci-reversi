@@ -145,7 +145,7 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				JSONObject response = (JSONObject) args[0];
 				// screen payload
-				JSONObject eval = validatePayload(response, new String[] { "result", "username", "room" });
+				JSONObject eval = validatePayload(response, new String[] { "result", "username" });
 				if (!eval.getString("result").equals("valid")) {
 					Utils.err(eval.getString("message"));
 					return;
@@ -169,7 +169,8 @@ public class Reversi_Bot {
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
-								joinRoom("lobby");
+								room = "lobby";
+								joinRoom(room);
 							}
 						}
 						break;
@@ -311,7 +312,7 @@ public class Reversi_Bot {
 					if (!state.isMyTurn()) {
 						Utils.out("Not my turn, waiting patiently for the opponent");
 					} else if (state.getGameStatus().equals(GameState.GAME_STATUS_TERMINAL)) {
-					} else if (state.move_list.size() <= 0){
+					} else if (state.move_list.size() <= 0) {
 						Utils.out("No moves available, waiting for next update");
 					} else {
 						// pick a move
@@ -327,7 +328,8 @@ public class Reversi_Bot {
 						Utils.out("Playing token: " + move[0] + "," + move[1]);
 
 						// send move to server
-						if (opponent_bot == null && Instant.now().isBefore(green_light_to_move)) {
+						if ((opponent_bot == null || opponent_bot.equals("none"))
+								&& Instant.now().isBefore(green_light_to_move)) {
 							try {
 								TimeUnit.MILLISECONDS
 										.sleep(Instant.now().until(green_light_to_move, ChronoUnit.MILLIS));
@@ -359,14 +361,14 @@ public class Reversi_Bot {
 				// Get winner
 				JSONObject response = (JSONObject) args[0];
 				Utils.out("Game over! Winner is " + response.getString("winner"));
-				
+
 				gamesPlayed++;
 				if (gamesPlayed >= max_games) {
 					Utils.out("Reached max games! Shutting down.");
-					
+
 					System.exit(0);
 				}
-				
+
 				socket.disconnect();
 				room = "lobby";
 				// joinRoom(room);
@@ -461,11 +463,11 @@ public class Reversi_Bot {
 
 		String next_player = game.getString("whose_turn").substring(0, 1);
 
-		if(aiType.equals("mm")){
+		if (aiType.equals("mm")) {
 			return new MM_State(board, next_player);
-		}else if(aiType.equals("rl")){
+		} else if (aiType.equals("rl")) {
 			return new RL_State(board, next_player);
-		}else{
+		} else {
 			return new GameState(board, next_player);
 		}
 	}

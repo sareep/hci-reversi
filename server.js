@@ -673,6 +673,15 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        log("Spawning bot " + payload.username)
+        var msg_data = {
+            result: 'success',
+            room: "lobby",
+            username: "SERVER",
+            message: "Spawning bot " + payload.username,
+        }
+        io.in("lobby").emit('send_message_response', msg_data);
+
         payload.port = port;
         // payload.role = 'play'
         spawn_bot(payload)
@@ -716,18 +725,6 @@ io.sockets.on('connection', function (socket) {
      * @param {string} role 
      */
     function spawn_bot(payload) {
-        // function spawn_bot(port, difficulty, name, type, role = "play") {
-        // let args = payload
-        // let jar;
-
-        //get the right jar
-        // if (type === "ab") {
-        //     // jar = "AB_Bot.jar"
-        // } else {
-        //     // args.push(role)
-        // }
-
-        //spawn the bot
         // TODO describe payload here
         let child = require('child_process').spawn(
             "java", ["-jar", "bots/exes/Reversi_Bot.jar", JSON.stringify(payload)]
@@ -770,7 +767,7 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        log("Killing a bot: "+ JSON.stringify(payload))
+        log("Killing a bot: " + JSON.stringify(payload))
         /** Kill The Bot**/
         payload_out = {}
         payload_out.terminator = payload.terminator

@@ -136,7 +136,7 @@ socket.on("join_room_response", function (payload) {
     }
 
     //Message for new player joining
-    var newHTML = "<p>" + payload.username + " has joined</p>";
+    var newHTML = "<p><b>" + payload.username + "</b> has joined</p>";
     var newNode = $(newHTML);
     newNode.hide();
     $("#messages").prepend(newNode);
@@ -164,7 +164,7 @@ socket.on("player_disconnected", function (payload) {
     }
 
     //Message to show player leaving
-    var newHTML = "<p>" + payload.username + " left</p>";
+    var newHTML = "<p><b>" + payload.username + "</b> left</p>";
     var newNode = $(newHTML);
     newNode.hide();
     $("#messages").prepend(newNode);
@@ -506,38 +506,34 @@ socket.on('game_update', function (payload) {
 
             /* if a board space has changed */
             if (old_board[row][col] != board[row][col]) {
-                let rand = Math.floor(Math.random() * 90000)
-                console.log(rand)
                 if (old_board[row][col] == "?" && board[row][col] == " ") {
-                    // console.log('empty gif');
-                    // $('#'+row+'_'+col).html('<img src="assets/images/empty.gif" alt="empty square"/>')
                     $('#' + row + '_' + col).addClass('bg-success')
                 }
                 else if (old_board[row][col] == "?" && board[row][col] == "w") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif?'+rand+'" alt="white square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
                 }
                 else if (old_board[row][col] == "?" && board[row][col] == "b") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif?'+rand+'" alt="black square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
                 }
                 else if (old_board[row][col] == " " && board[row][col] == "w") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif?'+rand+'" alt="white square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
                 }
                 else if (old_board[row][col] == " " && board[row][col] == "b") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif?'+rand+'" alt="black square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
                 }
                 else if (old_board[row][col] == "w" && board[row][col] == " ") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_empty.gif?'+rand+'" alt="empty square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_empty.gif" alt="empty square"/>')
                 }
                 else if (old_board[row][col] == "b" && board[row][col] == " ") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_empty.gif?'+rand+'" alt="empty square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_empty.gif" alt="empty square"/>')
                 }
                 else if (old_board[row][col] == "w" && board[row][col] == "b") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_black.gif?'+rand+'" alt="black square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_black.gif" alt="black square"/>')
                 }
                 else if (old_board[row][col] == "b" && board[row][col] == "w") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_white.gif?'+rand+'" alt="white square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_white.gif" alt="white square"/>')
                 } else {
-                    $('#' + row + '_' + col).html('<img src="assets/images/error.gif?'+rand+'" alt="error square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/error.gif" alt="error square"/>')
                 }
             }
             /* Interactivity */

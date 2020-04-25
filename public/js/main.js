@@ -301,7 +301,7 @@ function spawn_bot(ai_type, role) {
     payload.difficulty = $("#difficulty").children("option:selected").val();
     payload.ai_type = ai_type
     payload.role = role // TODO remove this from everything? but leave for now
-    payload.username = username + "_bot_" + ai_type + "_" + difficulty
+    payload.username = username + "_bot_" + ai_type + "_" + payload.difficulty
     payload.opponent = "none";
 
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
@@ -395,6 +395,9 @@ function makeKillButton(socket_id) {
     return (newNode)
 }
 
+function goHome(){
+    window.location.href = 'index.html'
+}
 
 /*** Ready Load ***/
 $(function () {
@@ -446,8 +449,10 @@ socket.on('game_update', function (payload) {
     var border;
     if (socket.id == payload.game.player_white.socket) {
         my_color = "white"
+        $('link[rel="icon"]').attr('href', 'assets/images/white_tile.png')
     } else if (socket.id == payload.game.player_black.socket) {
         my_color = "black"
+        $('link[rel="icon"]').attr('href', 'assets/images/black_tile.png')
     } else {
         /* Something weird happened, send client back to lobby */
         console.log('something weird happened, sending back to lobby')
@@ -501,46 +506,47 @@ socket.on('game_update', function (payload) {
 
             /* if a board space has changed */
             if (old_board[row][col] != board[row][col]) {
-
+                let rand = Math.floor(Math.random() * 90000)
+                console.log(rand)
                 if (old_board[row][col] == "?" && board[row][col] == " ") {
                     // console.log('empty gif');
                     // $('#'+row+'_'+col).html('<img src="assets/images/empty.gif" alt="empty square"/>')
                     $('#' + row + '_' + col).addClass('bg-success')
                 }
                 else if (old_board[row][col] == "?" && board[row][col] == "w") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif?'+rand+'" alt="white square"/>')
                 }
                 else if (old_board[row][col] == "?" && board[row][col] == "b") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif?'+rand+'" alt="black square"/>')
                 }
                 else if (old_board[row][col] == " " && board[row][col] == "w") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif" alt="white square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_white.gif?'+rand+'" alt="white square"/>')
                 }
                 else if (old_board[row][col] == " " && board[row][col] == "b") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif" alt="black square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/empty_to_black.gif?'+rand+'" alt="black square"/>')
                 }
                 else if (old_board[row][col] == "w" && board[row][col] == " ") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_empty.gif" alt="empty square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_empty.gif?'+rand+'" alt="empty square"/>')
                 }
                 else if (old_board[row][col] == "b" && board[row][col] == " ") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_empty.gif" alt="empty square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_empty.gif?'+rand+'" alt="empty square"/>')
                 }
                 else if (old_board[row][col] == "w" && board[row][col] == "b") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_black.gif" alt="black square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/white_to_black.gif?'+rand+'" alt="black square"/>')
                 }
                 else if (old_board[row][col] == "b" && board[row][col] == "w") {
-                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_white.gif" alt="white square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/black_to_white.gif?'+rand+'" alt="white square"/>')
                 } else {
-                    $('#' + row + '_' + col).html('<img src="assets/images/error.gif" alt="error square"/>')
+                    $('#' + row + '_' + col).html('<img src="assets/images/error.gif?'+rand+'" alt="error square"/>')
                 }
             }
             /* Interactivity */
             $('#' + row + '_' + col).off('click');
-            $('#' + row + '_' + col).removeClass('hovered_over')
+            $('#' + row + '_' + col).removeClass('valid_move')
 
             if (payload.game.whose_turn === my_color) {
                 if (payload.game.legal_moves[row][col] === my_color.substr(0, 1)) {
-                    $('#' + row + '_' + col).addClass('hovered_over')
+                    $('#' + row + '_' + col).addClass('valid_move')
                     $('#' + row + '_' + col).click(function (r, c) {
                         return function () {
                             var payload = {}

@@ -10,10 +10,11 @@ table#game_board{
 }
 
 table#game_board td{
-    padding:5px;
+    /* padding:5px; */
+    background: url('../images/empty.gif');
     border-style: solid;
     border-width: 1px;
-    border-color: rgb(50,50,50);
+    border-color: white;
     width: 66px;
     height: 66px;
 }
@@ -22,8 +23,8 @@ table#game_board td{
     margin: 0px;
 }
 
-td.hovered_over:hover {
-    background: url('../images/hover.gif');
+td.valid_move {
+    background: url('../images/hover.gif')!important;
     background-size: 100% 100%;
 }
 

@@ -7,6 +7,7 @@ package base.minimax;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import base.GameState;
 import base.Reversi_Bot;
@@ -22,8 +23,8 @@ public class MM_Think {
     private MM_State currentState;
     private MM_State origin_s;
 
-    public static String[] run(GameState origin_state) {
-        origin = (MM_State) origin_state;
+    public static String[] run(MM_State origin_state) {
+        origin = origin_state;
 
         String[] best_move;
         // int timeLimit = 0;
@@ -60,21 +61,27 @@ public class MM_Think {
      * Picks the move that will immediately flip the most tiles
      */
     private static String[] simpleGreedyFirst(MM_State state) {
-        String[] greediestMove = null;
         int greediestCount = 0;
+        ArrayList<String[]> bestMoves = new ArrayList<String[]>();
         for (String moveString : state.move_list) {
             String[] move = moveString.split("");
             MM_State child = new MM_State(origin, Integer.parseInt(move[0]), Integer.parseInt(move[1]),
                     origin.next_player);
+
             int originalCount = origin.getScore(Reversi_Bot.my_color);
             int newCount = child.getScore(Reversi_Bot.my_color);
             int tilesFlipped = newCount - originalCount;
+
             if (tilesFlipped > greediestCount) {
                 greediestCount = tilesFlipped;
-                greediestMove = move;
+                bestMoves = new ArrayList<String[]>();
+                bestMoves.add(move);
+            }else if(tilesFlipped == greediestCount){
+                bestMoves.add(move);
             }
         }
-        return greediestMove;
+
+        return bestMoves.get(new Random().nextInt(bestMoves.size()));
     }
 
     /**

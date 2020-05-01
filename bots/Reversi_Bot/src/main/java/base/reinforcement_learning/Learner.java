@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import base.Reversi_Bot;
 import base.Utils;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.EpsilonGreedy;
@@ -27,17 +28,42 @@ import burlap.statehashing.simple.SimpleHashableStateFactory;
 
 /**
  * Uses Reinforcement Learning to generate leraning episodes. Must be run on a
- * local machine, cannot store episodes on Heroku.
+ * local machine, cannot store episodes on Heroku at present.
  */
 public class Learner extends MDPSolver implements LearningAgent, QProvider {
 
+    private int numEpsToRun;
     Map<HashableState, List<QValue>> qValues;
     QFunction qinit;
     double learningRate;
     Policy learningPolicy;
 
+    // Default Learning parameters
+    public Learner() {
+        this(new RL_World().generateDomain(), 0.1, new SimpleHashableStateFactory(), new ConstantValueFunction(), 0.1,
+                0.1);
+        switch (Reversi_Bot.difficulty) {
+            case "easy":
+                numEpsToRun = 50;
+                break;
+
+            case "medium":
+                numEpsToRun = 150;
+                break;
+
+            case "hard":
+                numEpsToRun = 300;
+                break;
+
+            // TODO implement a custom setting with user input # of eps
+            default:
+                numEpsToRun = 10;
+                break;
+        }
+    }
+
     public Learner(SADomain domain, double gamma, HashableStateFactory hashFact, QFunction qinit, double learningRate,
-            double epsilon, int numEpsToRun) {
+            double epsilon) {
         this.solverInit(domain, gamma, hashingFactory);
         this.qinit = qinit;
         this.hashingFactory = hashFact;
@@ -46,59 +72,43 @@ public class Learner extends MDPSolver implements LearningAgent, QProvider {
         this.learningPolicy = new EpsilonGreedy(this, epsilon);
     }
 
-    public static void run(String difficulty) {
-        int numEpsToRun;
-        switch (difficulty) {
-            case "easy":
-                numEpsToRun = 1;
-                break;
-
-            case "medium":
-                numEpsToRun = 50;
-                break;
-
-            case "hard":
-                numEpsToRun = 100;
-                break;
-
-            default:
-                numEpsToRun = 10;
-                break;
-        }
-
-        // Defaults
-        double gamma = 0.1;
-        double learningRate = 0.1;
-        double epsilon = 0.1;
-        QFunction qinit = new ConstantValueFunction();
-
-        RL_World world = new RL_World();
-        SADomain domain = world.generateDomain();
+    public void learn(String difficulty) {
 
         RL_State initialState = new RL_State();
-        HashableStateFactory hashFact = new SimpleHashableStateFactory();
-        LearningAgent agent = new Learner(domain, gamma, hashFact, qinit, learningRate, epsilon, numEpsToRun);
 
         SimulatedEnvironment env = new SimulatedEnvironment(domain, initialState);
-        // RL_Env env = new RL_Env(domain, initialState); TODO get this one working so
-        // you can reward winners?
+        // TODO get this one working so you can reward winners?
+        // RL_Env env = new RL_Env(domain, initialState);
 
-        for (int i = 0; i < numEpsToRun; i++) {
-            Episode e = agent.runLearningEpisode(env);
+        for (int i = 0; i < this.numEpsToRun; i++) {
+            /* Episode e = */this.runLearningEpisode(env);
             Utils.out("Finished episode " + i);
 
-            try {
-                e.write(Utils.PATH_TO_EPISODES + "ql_" + i);
-            } catch (Exception ex) {
-                Utils.err(ex.getMessage());
-            }
+            /*
+             * Commented out for now. Uncomment when implementing Apprenticeship or
+             * something similar
+             */
+            // try {
+            // e.write(Utils.PATH_TO_EPISODES + "ql_" + i);
+            // } catch (Exception ex) {
+            // Utils.err(ex.getMessage());
+            // }
 
             // reset environment for next learning episode
             env.resetEnvironment();
         }
-        Utils.out("Wrote " + numEpsToRun + " episodes to " + Utils.PATH_TO_EPISODES);
 
     }
+
+    public String[] play(RL_State state) {
+        Action a = this.learningPolicy.action(state);
+
+        String[] move = a.actionName().substring(1).split("");
+        return move;
+    }
+
+    // Below here was taken from an official BURLAP tutorial on Github. WIll be
+    // tweaking it soon!
 
     @Override
     public Episode runLearningEpisode(Environment env) {
@@ -107,7 +117,7 @@ public class Learner extends MDPSolver implements LearningAgent, QProvider {
 
     @Override
     public Episode runLearningEpisode(Environment env, int maxSteps) {
-        // initialize our episode object with the initial state of the environment
+        // initialize episode object with the initial state of the environment
         Episode e = new Episode(env.currentObservation());
 
         // behave until a terminal state or max steps is reached

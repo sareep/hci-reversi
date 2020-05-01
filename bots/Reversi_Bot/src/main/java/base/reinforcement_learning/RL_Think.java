@@ -30,20 +30,20 @@ public class RL_Think {
         SADomain domain = world.generateDomain();
         List<Episode> episodes = Episode.readEpisodes(Utils.PATH_TO_EPISODES);
 
-        //create reward function features to use
-		RL_StateFeatures features  = null;//= new RL_StateFeatures(domain, 5); // TODO implement this
+        // //create reward function features to use
+		// RL_StateFeatures features  = null;//= new RL_StateFeatures(domain, 5); // TODO implement this
 
-		//create a reward function that is linear with respect to those features and has small random
-		//parameter values to start
-		LinearStateDifferentiableRF rf = new LinearStateDifferentiableRF(features, 5); // TODO how to use this
-		// for(int i = 0; i < rf.numParameters(); i++){
-		// 	rf.setParameter(i, RandomFactory.getMapped(0).nextDouble()*0.2 - 0.1);
-		// }
-        double beta = 10; //idk what this does yet
-        DifferentiableSparseSampling planner = new DifferentiableSparseSampling(domain, rf, 0.99, new SimpleHashableStateFactory(), 10, -1, beta);
-		planner.toggleDebugPrinting(false);
+		// //create a reward function that is linear with respect to those features and has small random
+		// //parameter values to start
+		// LinearStateDifferentiableRF rf = new LinearStateDifferentiableRF(features, 5); // TODO how to use this
+		// // for(int i = 0; i < rf.numParameters(); i++){
+		// // 	rf.setParameter(i, RandomFactory.getMapped(0).nextDouble()*0.2 - 0.1);
+		// // }
+        // double beta = 10; //idk what this does yet
+        // DifferentiableSparseSampling planner = new DifferentiableSparseSampling(domain, rf, 0.99, new SimpleHashableStateFactory(), 10, -1, beta);
+		// planner.toggleDebugPrinting(false);
 
-        IRLRequest request = new IRLRequest(domain, planner, episodes);
+        // IRLRequest request = new IRLRequest(domain, planner, episodes);
 
         /** TODO use the episodes to analyze the current board state FIND HOW TO DO THIS
         */

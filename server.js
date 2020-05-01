@@ -1026,6 +1026,21 @@ io.sockets.on('connection', function (socket) {
             log('player count in game ' + game_id + ': ' + numClients)
             io.in(game_id).emit('game_over', success_data)
 
+            let message
+            if (winner == "Black") {
+                message = games[game_id].player_black.username + " beat " + games[game_id].player_white.username + "!";
+            }else if (winner == "White") {
+                message = games[game_id].player_white.username + " beat " + games[game_id].player_black.username + "!";
+            }
+            message += " The score was " + count_tiles("b", games[game_id].board) + " to " + count_tiles("w", games[game_id].board) + "."
+            var msg_data = {
+                result: 'success',
+                room: "lobby",
+                username: "SERVER",
+                message: message,
+            }
+            io.in("lobby").emit('send_message_response', msg_data);
+
 
             /* Delete old games */
             setTimeout(function (id) {
@@ -1036,5 +1051,18 @@ io.sockets.on('connection', function (socket) {
 
         }
 
+    }
+
+    function count_tiles(color, board){
+        let count = 0;
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                const tile = board[i][j];
+                if(tile == color){
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 })

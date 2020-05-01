@@ -33,7 +33,7 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.client.IO.Options;
 import io.socket.emitter.Emitter;
-
+// TODO update lobby.html. make only 1 button to play rl. fix two-bot button to get parameters
 /**
  * Hello world!
  *
@@ -67,6 +67,9 @@ public class Reversi_Bot {
 	/** Opponent Info **/
 	public static String opponent_bot = null;
 	public static String opp_color = "w";
+
+	/** Learner Instance **/
+	public static Learner learner = null;
 
 	/**
 	 * Main method run on spawn from server
@@ -105,10 +108,12 @@ public class Reversi_Bot {
 		opts.forceNew = true;
 		socket = IO.socket("http://localhost:" + port);
 
-		if (role.equals("learn")) {
-			Learner.run(difficulty);
-			Utils.out("Shutting down");
-			System.exit(0);
+		// if (role.equals("learn")) {
+		if (aiType.equals("rl")) {
+			learner = new Learner();
+			learner.learn(difficulty);
+			// Utils.out("Shutting down");
+			// System.exit(0);
 		}
 
 		if (opponent_bot != null) {
@@ -316,6 +321,7 @@ public class Reversi_Bot {
 						Utils.out("No moves available, waiting for next update");
 					} else {
 						// pick a move
+						// Should have form {rowInt, colInt}
 						String[] move = decideMoveToPlay(state);
 
 						// jsonify the move
@@ -360,7 +366,10 @@ public class Reversi_Bot {
 			public void call(Object... args) {
 				// Get winner
 				JSONObject response = (JSONObject) args[0];
-				Utils.out("Game over! Winner is " + response.getString("winner"));
+
+				GameState final_state = prepareTurn(response);
+				Utils.out("Game over! Winner is " + response.getString("winner") + ". The score was "
+						+ final_state.black_count + " to " + final_state.white_count);
 
 				gamesPlayed++;
 				if (gamesPlayed >= max_games) {
@@ -482,12 +491,12 @@ public class Reversi_Bot {
 		switch (aiType) {
 
 			case "mm":
-				move = MM_Think.run(state);
+				move = MM_Think.run((MM_State) state);
 				break;
 
-			// case "rl":
-			// move = RL_Think.getMove();
-			// break;
+			case "rl":
+				move = learner.play((RL_State) state);
+				break;
 
 			default:
 				move = state.getRandomMove().split("");

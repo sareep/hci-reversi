@@ -6,7 +6,8 @@ package base;
 public class Utils {
 
     /**** Constants ****/
-    public static final String PATH_TO_EPISODES = System.getProperty("user.dir") + "/../learning_episodes/"+ Reversi_Bot.difficulty + "/";
+    public static final String PATH_TO_EPISODES = "C:/Users/reeps/Documents/Westmont/Classwork/Fall 2019/HCIT/reversi/bots/learning_episodes/"
+            + Reversi_Bot.aiType + "/" + Reversi_Bot.difficulty + "/";
 
     /**** Print shortcuts ****/
 

@@ -26,7 +26,8 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 
 /**
- * The actual player who does stuff!!
+ * Uses Reinforcement Learning to generate leraning episodes. Must be run on a
+ * local machine, cannot store episodes on Heroku.
  */
 public class Learner extends MDPSolver implements LearningAgent, QProvider {
 
@@ -79,13 +80,18 @@ public class Learner extends MDPSolver implements LearningAgent, QProvider {
         LearningAgent agent = new Learner(domain, gamma, hashFact, qinit, learningRate, epsilon, numEpsToRun);
 
         SimulatedEnvironment env = new SimulatedEnvironment(domain, initialState);
-        // RL_Env env = new RL_Env(domain, initialState); TODO get this one working so you can reward winners?
+        // RL_Env env = new RL_Env(domain, initialState); TODO get this one working so
+        // you can reward winners?
 
-        // TODO empty out the old episodes first?
         for (int i = 0; i < numEpsToRun; i++) {
             Episode e = agent.runLearningEpisode(env);
+            Utils.out("Finished episode " + i);
 
-            e.write(Utils.PATH_TO_EPISODES + "ql_" + i);
+            try {
+                e.write(Utils.PATH_TO_EPISODES + "ql_" + i);
+            } catch (Exception ex) {
+                Utils.err(ex.getMessage());
+            }
 
             // reset environment for next learning episode
             env.resetEnvironment();
@@ -111,7 +117,7 @@ public class Learner extends MDPSolver implements LearningAgent, QProvider {
 
             // select an action
             Action a = this.learningPolicy.action(curState);
-            Utils.out("Play " + steps + " is made: " + a);
+
             // take the action and observe outcome
             EnvironmentOutcome eo = env.executeAction(a);
 

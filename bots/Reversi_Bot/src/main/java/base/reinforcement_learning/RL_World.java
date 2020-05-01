@@ -1,18 +1,17 @@
 package base.reinforcement_learning;
 
-import base.Utils;
-import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.singleagent.SADomain;
-import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 
-@SuppressWarnings("unused")
 public class RL_World implements DomainGenerator {
 
-
+    @Override
+    public SADomain generateDomain() {
+        SADomain domain = new SADomain();
+        domain.addActionType(new MoveActionType());
+        domain.setModel(new RL_Model());
+        return domain;
+    }
 
     // public static int maxGames;
 
@@ -38,11 +37,4 @@ public class RL_World implements DomainGenerator {
     //     }
     // }
 
-    @Override
-    public SADomain generateDomain() {
-        SADomain domain = new SADomain();
-        domain.addActionType(new MoveActionType());
-        domain.setModel(new RL_Model());
-        return domain;
-    }
 }

@@ -44,15 +44,15 @@ public class Learner extends MDPSolver implements LearningAgent, QProvider {
                 0.1);
         switch (Reversi_Bot.difficulty) {
             case "easy":
-                numEpsToRun = 50;
-                break;
-
-            case "medium":
                 numEpsToRun = 150;
                 break;
 
-            case "hard":
+            case "medium":
                 numEpsToRun = 300;
+                break;
+
+            case "hard":
+                numEpsToRun = 600;
                 break;
 
             // TODO implement a custom setting with user input # of eps

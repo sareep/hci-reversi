@@ -31,18 +31,18 @@ public class MM_Think {
 
         switch (Reversi_Bot.difficulty) {
             case "easy":
-                Utils.out("Playing Random");
                 best_move = origin.getRandomMove().split("");
                 break;
 
             case "medium":
                 // Greedy First
-                Utils.out("Playing Greedy");
                 best_move = simpleGreedyFirst(origin);
                 // timeLimit = 2;
                 break;
 
             case "hard":
+                best_move = simpleGreedyFirst(origin);
+                break;
                 // if (timeLimit == 0) {
                 // timeLimit = 4;
                 // }
@@ -50,7 +50,6 @@ public class MM_Think {
                 // IDDFS();
 
             default:
-                Utils.out("Playing Random");
                 best_move = origin.getRandomMove().split("");
         }
 

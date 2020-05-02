@@ -1,5 +1,7 @@
 package base;
 
+import org.json.JSONObject;
+
 /**
  * Utils
  */
@@ -45,5 +47,17 @@ public class Utils {
                 break;
         }
     }
+
+	public static void shut_down(int exit_status, String exit_message) {
+		if(exit_status == 0){
+			out(exit_message);
+		}else{
+			err(exit_message);
+		}
+		
+		out("Shutting down");
+		Reversi_Bot.socket.emit("disconnect", new JSONObject());
+		System.exit(exit_status);
+	}
 
 }

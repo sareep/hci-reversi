@@ -4,6 +4,7 @@
 package base.minimax;
 
 import base.GameState;
+import base.Utils;
 
 public class MM_State extends GameState {
 
@@ -40,8 +41,7 @@ public class MM_State extends GameState {
         } else if (who.equals(MM_State.WHITE)) {
             return this.white_count;
         } else {
-            err("Bad color: " + who);
-            System.exit(1);
+            Utils.shut_down(1, "Bad color: " + who);
             return -1;
         }
     }

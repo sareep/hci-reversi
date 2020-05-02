@@ -6,6 +6,9 @@ var static = require('node-static');
 /*Include the http server library*/
 var http = require('http');
 
+/*Include fs library*/
+var fs = require('fs');
+
 /* Assume running on Heroku */
 var port = process.env.PORT;
 var directory = __dirname + '/public';
@@ -1026,13 +1029,22 @@ io.sockets.on('connection', function (socket) {
             log('player count in game ' + game_id + ': ' + numClients)
             io.in(game_id).emit('game_over', success_data)
 
+
+            if (players[games[game_id].player_black.socket].is_bot && players[games[game_id].player_white.socket].is_bot) {
+                record_game(games[game_id].player_black.username, black_final, games[game_id].player_white.username, white_final);
+            }
+
             let message
             if (winner == "Black") {
                 message = games[game_id].player_black.username + " beat " + games[game_id].player_white.username + "!";
-            }else if (winner == "White") {
+            } else if (winner == "White") {
                 message = games[game_id].player_white.username + " beat " + games[game_id].player_black.username + "!";
+            } else if (winner = "tie game") {
+                message = "Tie game between " + games[game_id].player_black.username + " and " + games[game_id].player_white.username + "!";
+            } else {
+                message = "Uh oh, no one won but it wasn't a tie! Something went wrong."
             }
-            message += " The score was " + count_tiles("b", games[game_id].board) + " to " + count_tiles("w", games[game_id].board) + "."
+            message += " The score was " + black_final + " to " + white_final + "."
             var msg_data = {
                 result: 'success',
                 room: "lobby",
@@ -1053,16 +1065,12 @@ io.sockets.on('connection', function (socket) {
 
     }
 
-    function count_tiles(color, board){
-        let count = 0;
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[i].length; j++) {
-                const tile = board[i][j];
-                if(tile == color){
-                    count++;
-                }
-            }
-        }
-        return count;
+    function record_game(b_name, b_count, w_name, w_count) {
+        data = b_name + ";" + b_count + ";" + w_name + ";" + w_count + "\n"
+
+        fs.appendFile('bots/game_results/ai_game_results.txt', data, function (err) {
+            if (err) throw err;
+            log('Wrote game to memory');
+        });
     }
 })

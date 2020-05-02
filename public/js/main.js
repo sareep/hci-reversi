@@ -308,8 +308,11 @@ function spawn_bot(ai_type, role) {
     socket.emit('spawn_bot', payload)
 }
 
-function spawn_bots(difficulty1, ai_type1, difficulty2, ai_type2) {
+function spawn_bots(ai_type1, ai_type2) {
     var payload = {};
+    difficulty1 = $("#difficulty").children("option:selected").val();
+    difficulty2 = difficulty1;
+    
     username1 = username + "_b2b_"+ai_type1 + "_" + difficulty1
     username2 = username + "_b2b_"+ai_type2 + "_" + difficulty2
 

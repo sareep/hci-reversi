@@ -61,9 +61,11 @@ io.sockets.on('connection', function (socket) {
 
 
     /* join room command */
-    /* payload:
+
+    /**
+     *  payload:
      *   {
-         *      'room': room to join,
+     *      'room': room to join,
      *      'username': username of person joining
      *   }
      * 
@@ -92,23 +94,18 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        //Check that the client has a room to join
-        var room = payload.room;
-        if (('undefined' === typeof room) || (!room)) {
-            var error_message = 'join_room didn\'t specify a room, command aborted';
-            log(error_message);
+        // Check that payload has appropriate keys/values
+        let keys = ["room", "username"]
+        let missing_keys = validate_payload(keys, payload)
+        if (missing_keys.length != 0) {
+            var error_message = 'join_room didn\'t specify the following, command aborted: ' + missing_keys.join()
+            log(error_message)
             socket.emit('join_room_response', { result: 'fail', message: error_message })
             return;
         }
 
-        //Check that a username has been provided
+        var room = payload.room;
         var username = payload.username;
-        if (('undefined' === typeof username) || (!username)) {
-            var error_message = 'join_room didn\'t specify a username, command aborted';
-            log(error_message);
-            socket.emit('join_room_response', { result: 'fail', message: error_message })
-            return;
-        }
 
         //Check that payload declares bot/human status
         var is_bot = payload.is_bot;
@@ -196,7 +193,9 @@ io.sockets.on('connection', function (socket) {
     })
 
     /* send message command */
-    /*   payload:
+
+    /**
+     *    payload:
      *   {
      *      'message': message to send,
      *      'username': username of person joining
@@ -225,29 +224,20 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
+        // Check that payload has appropriate keys/values
+        let keys = ["room", "username", "message"]
+        let missing_keys = validate_payload(keys, payload)
+        if (missing_keys.length != 0) {
+            var error_message = 'send_message didn\'t specify the following, command aborted: ' + missing_keys.join()
+            log(error_message)
+            socket.emit('send_message_response', { result: 'fail', message: error_message })
+            return;
+        }
+
+        //shortcut names
         var room = payload.room;
-        if (('undefined' === typeof room) || (!room)) {
-            var error_message = 'send_message didn\'t specify a room, command aborted';
-            log(error_message);
-            socket.emit('send_message_response', { result: 'fail', message: error_message })
-            return;
-        }
-
         var username = players[socket.id].username;
-        if (('undefined' === typeof username) || (!username)) {
-            var error_message = 'send_message didn\'t specify a username, command aborted';
-            log(error_message);
-            socket.emit('send_message_response', { result: 'fail', message: error_message })
-            return;
-        }
-
         var message = payload.message;
-        if (('undefined' === typeof message) || (!message)) {
-            var error_message = 'send_message didn\'t specify a username, command aborted';
-            log(error_message);
-            socket.emit('send_message_response', { result: 'fail', message: error_message })
-            return;
-        }
 
         var success_data = {
             result: 'success',
@@ -262,7 +252,9 @@ io.sockets.on('connection', function (socket) {
 
 
     /* invite command */
-    /*   payload:
+
+    /**
+     *    payload:
      *   {
      *      'requested_user': the socket id of the person to be invited
      *   }
@@ -288,7 +280,7 @@ io.sockets.on('connection', function (socket) {
      *      'result': 'fail',
      *      'message': failure invite,
      *   }
-     * */
+     */
     socket.on('invite', function (payload) {
         log('invite with ' + JSON.stringify(payload));
 
@@ -336,7 +328,9 @@ io.sockets.on('connection', function (socket) {
     })
 
     /* uninvite command */
-    /*   payload:
+
+    /**
+     *    payload:
      *   {
      *      'requested_user': the socket id of the person to be uninvited
      *   }
@@ -362,7 +356,7 @@ io.sockets.on('connection', function (socket) {
      *      'result': 'fail',
      *      'message': failure uninvited,
      *   }
-     * */
+     */
     socket.on('uninvite', function (payload) {
         log('uninvite with ' + JSON.stringify(payload));
 
@@ -388,9 +382,10 @@ io.sockets.on('connection', function (socket) {
             socket.emit('uninvite_response', { result: 'fail', message: error_message })
             return;
         }
-
+        
         var room = players[socket.id].room;
         var roomObj = io.sockets.adapter.rooms[room];
+
         /* make sure invited user is in the room */
         if (!roomObj.sockets.hasOwnProperty(requested_user)) {
             var error_message = 'invite requested a user that wasn\'t in the room';
@@ -418,7 +413,9 @@ io.sockets.on('connection', function (socket) {
     })
 
     /* game_start command */
-    /*   payload:
+
+    /**
+     *    payload:
      *   {
      *      'requested_user': the socket id of the person to be invited
      *   }
@@ -445,7 +442,7 @@ io.sockets.on('connection', function (socket) {
      *      'result': 'fail',
      *      'message': failure invite,
      *   }
-     * */
+     */
     socket.on('game_start', function (payload) {
         log('game_start ' + JSON.stringify(payload));
 
@@ -474,6 +471,7 @@ io.sockets.on('connection', function (socket) {
 
         var room = players[socket.id].room;
         var roomObj = io.sockets.adapter.rooms[room];
+
         /* make sure playing user is in the room */
         if (!roomObj.sockets.hasOwnProperty(requested_user)) {
             var error_message = 'game_start requested a user that wasn\'t in the room';
@@ -504,7 +502,9 @@ io.sockets.on('connection', function (socket) {
     })
 
     /* play_token command */
-    /*   payload:
+
+    /**   
+     * payload:
      *   {
      *      'row': 0-7,
      *      'column': 0-7,
@@ -521,7 +521,7 @@ io.sockets.on('connection', function (socket) {
      *      'result' : 'fail',
      *      'message' : failure message
      *   }
-     * */
+     */
     socket.on('play_token', function (payload) {
         log('play_token with ' + JSON.stringify(payload));
 
@@ -629,9 +629,16 @@ io.sockets.on('connection', function (socket) {
         send_game_update(socket, game_id, 'played a token')
     })
 
-
+    /**
+     * @param {object} payload {
+     *      username: name for the bot,
+     *      ai_type: mm || rl, minimax or reinforcement learning,
+     *      difficulty: easy || medium || hard,
+     *      role: play || invite,
+     *      opponent: "" || another username
+     *     }
+     */
     socket.on('spawn_bot', function (payload) {
-
 
         /** Screen the payload **/
         if (('undefined' === typeof payload) || (!payload)) {
@@ -641,38 +648,13 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        if (('undefined' === typeof payload.username) || (!payload.username)) {
-            var error_message = 'spawn_bot had no username, command aborted';
-            log(error_message);
-            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
-            return;
-        }
-
-        if (('undefined' === typeof payload.ai_type) || (!payload.ai_type)) {
-            var error_message = 'spawn_bot had no ai_type, command aborted';
-            log(error_message);
-            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
-            return;
-        }
-
-        if (('undefined' === typeof payload.difficulty) || (!payload.difficulty)) {
-            var error_message = 'spawn_bot had no difficulty, command aborted';
-            log(error_message);
-            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
-            return;
-        }
-
-        if (('undefined' === typeof payload.role) || (!payload.role)) {
-            var error_message = 'spawn_bot had no role, command aborted';
-            log(error_message);
-            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
-            return;
-        }
-
-        if (('undefined' === typeof payload.opponent) || (!payload.opponent)) {
-            var error_message = 'spawn_bot had no opponent, command aborted';
-            log(error_message);
-            socket.emit('spawn_bot_reponse', { result: 'fail', message: error_message })
+        // Check that payload has appropriate keys/values
+        let keys = ["username", "ai_type", "difficulty", "role", "opponent"]
+        let missing_keys = validate_payload(keys, payload)
+        if (missing_keys.length != 0) {
+            var error_message = 'spawn_bot didn\'t specify the following, command aborted: ' + missing_keys.join()
+            log(error_message)
+            socket.emit('spawn_bot_response', { result: 'fail', message: error_message })
             return;
         }
 
@@ -686,52 +668,26 @@ io.sockets.on('connection', function (socket) {
         io.in("lobby").emit('send_message_response', msg_data);
 
         payload.port = port;
-        // payload.role = 'play'
         spawn_bot(payload)
-
-
-        // if(payload.train_method != 'none'){
-        //     payload.username += "_teacher"
-        //     payload.ai_type = payload.train_method
-        //     payload.train_method = 'none'
-        //     payload.role = 'teach'
-        //     spawn_bot(payload)
-        // }
-
-        /** Spawn RL Bot(s) **/
-        // switch (payload.train_method) {
-        //     case "none":
-        //         spawn_bot(port, "rl", payload.name, payload.difficulty)
-        //         break;
-
-        //     case "rl_bot":
-        //         spawn_bot(port, "rl", payload.name, payload.difficulty)
-        //         spawn_bot(port, "rl", payload.name + "_trainer", payload.difficulty, "train")
-        //         break;
-
-        //     case "ab_bot":
-        //         spawn_bot(port, "ab", payload.name, payload.difficulty)
-        //         break;
-
-        //     default:
-        //         break;
-        // }
 
     })
 
     /**
      * Creates a bot by finding & running a jar
-     * @param {string} port 
-     * @param {string} type 
-     * @param {string} difficulty 
-     * @param {string} name 
-     * @param {string} role 
+     * @param {object} payload {
+     *      username: name for the bot,
+     *      ai_type: mm || rl, minimax or reinforcement learning,
+     *      difficulty: easy || medium || hard,
+     *      role: play || invite,
+     *      opponent: "" || another username,
+     *      port: port for the bot to use
+     *     }
+     *              
      */
     function spawn_bot(payload) {
-        // TODO describe payload here
-        let child = require('child_process').spawn(
-            "java", ["-jar", "bots/exes/Reversi_Bot.jar", JSON.stringify(payload)]
-        );
+        
+        const { spawn } = require('child_process');
+        const child = spawn("java", ["-jar", "bots/exes/Reversi_Bot.jar", JSON.stringify(payload)])
 
         //handle I/O
         child.stdout.on('data', function (data) {
@@ -741,6 +697,10 @@ io.sockets.on('connection', function (socket) {
         child.stderr.on('data', function (data) {
             log(data.toString());
         });
+
+        child.on('close', (code) => {
+            log(`child exited with code ${code}`)
+        })
     }
 
 
@@ -756,17 +716,13 @@ io.sockets.on('connection', function (socket) {
             return;
         }
 
-        if (('undefined' === typeof payload.to_kill) || (!payload.to_kill)) {
-            var error_message = 'kill_bot had no socket, command aborted';
-            log(error_message);
-            socket.emit('kill_bot_reponse', { result: 'fail', message: error_message })
-            return;
-        }
-
-        if (('undefined' === typeof payload.terminator) || (!payload.terminator)) {
-            var error_message = 'kill_bot had no socket, command aborted';
-            log(error_message);
-            socket.emit('kill_bot_reponse', { result: 'fail', message: error_message })
+        // Check that payload has appropriate keys/values
+        let keys = ["to_kill", "terminator"]
+        let missing_keys = validate_payload(keys, payload)
+        if (missing_keys.length != 0) {
+            var error_message = 'kill_bot didn\'t specify the following, command aborted: ' + missing_keys.join()
+            log(error_message)
+            socket.emit('kill_bot_response', { result: 'fail', message: error_message })
             return;
         }
 
@@ -1030,9 +986,10 @@ io.sockets.on('connection', function (socket) {
             io.in(game_id).emit('game_over', success_data)
 
 
-            if (players[games[game_id].player_black.socket].is_bot && players[games[game_id].player_white.socket].is_bot) {
-                record_game(games[game_id].player_black.username, black_final, games[game_id].player_white.username, white_final);
-            }
+            // Record game
+            // if (players[games[game_id].player_black.socket].is_bot && players[games[game_id].player_white.socket].is_bot) {
+            //     record_game(games[game_id].player_black.username, black_final, games[game_id].player_white.username, white_final);
+            // }
 
             let message
             if (winner == "Black") {
@@ -1072,5 +1029,20 @@ io.sockets.on('connection', function (socket) {
             if (err) throw err;
             log('Wrote game to memory');
         });
+    }
+
+    /**
+     * 
+     * @param {Array<String>} requiredKeys 
+     * @param {JSON} object 
+     */
+    function validate_payload(requiredKeys, object) {
+        let missing = []
+        for (x in requiredKeys) {
+            if (!object[requiredKeys[x]] || "undefined" === typeof object[requiredKeys[x]]) {
+                missing.push(requiredKeys[x])
+            }
+        }
+        return missing
     }
 })

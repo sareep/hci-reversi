@@ -36,7 +36,9 @@ socket.on("log", function (array) {
 });
 
 
-/*** LISTENER FUNCTIONS ***/
+
+
+/***** LISTENER FUNCTIONS *****/
 
 /* Join Room Actions */
 socket.on("join_room_response", function (payload) {
@@ -85,41 +87,36 @@ socket.on("join_room_response", function (payload) {
         //Add the invite button
         var nodeC = $("<div></div>")
         nodeC.addClass("socket_" + payload.socket_id);
-        nodeC.addClass("col-2 text-right")
+        nodeC.addClass("col-2 text-left")
         var buttonC = makeInviteButton(payload.socket_id);
         nodeC.append(buttonC)
 
-        //Add animation
-        nodeA.hide();
-        nodeB.hide();
-        nodeC.hide();
-        $("#players").append(nodeA, nodeB, nodeC);
+        // Create kill button placeholder
+        var nodeK = $("<div><div>")
+        nodeK.addClass("socket_" + payload.socket_id)
+        nodeK.addClass("bot col-2 text-left")
 
         //Add kill button to bots
-        console.log('payload.is_bot value: ');console.log(payload.is_bot)
         if (payload.is_bot) {
-            var nodeK = $("<div><div>")
-            nodeK.addClass("socket_" + payload.socket_id)
-            nodeK.addClass("bot col-2 text-left")
             var buttonK = makeKillButton(payload.socket_id)
             nodeK.append(buttonK)
-            nodeK.hide();
-            $('#players').append(nodeK)
-            nodeK.slideDown(1000);
-        }else{
-            console.log('is not bot from top')
         }
 
+        //Add all parts to the main node
+        let mainNode = $('<li></li>')
+        mainNode.addClass("card-header d-flex align-items-center py-1")
+        mainNode.addClass("socket_" + payload.socket_id)
+        mainNode.append(nodeA, nodeB, nodeC, nodeK)
+        mainNode.hide();
 
-        nodeA.slideDown(1000);
-        nodeB.slideDown(1000);
-        nodeC.slideDown(1000);
+        $('#players').append(mainNode)
+        mainNode.slideDown(1000);
     } else {
         //For existing entries, just create the invite button
         uninvite(payload.socket_id)
         var buttonC = makeInviteButton(payload.socket_id);
         $(".socket_" + payload.socket_id + " button").replaceWith(buttonC)
-        
+
         //Add kill button to bots
         if (payload.is_bot) {
             var nodeK = $("<div><div>")
@@ -140,13 +137,13 @@ socket.on("join_room_response", function (payload) {
     var newNode = $(newHTML);
     newNode.hide();
     $("#messages").prepend(newNode);
+    $('#filler-player').slideUp(200, function () { $(this).remove(); })
     newNode.slideDown(1000);
 
 });
 
 /* Leave Room Actions */
 socket.on("player_disconnected", function (payload) {
-    console.log("leave response: " + payload.username);
     if (payload.result == "fail") {
         alert(payload.message);
         return;
@@ -158,9 +155,12 @@ socket.on("player_disconnected", function (payload) {
     }
 
     /* Animate out all the leaving player's elements */
+    $("li.socket_" + payload.socket_id).removeClass("py-1").addClass("py-0")
+
     var dom_elements = $(".socket_" + payload.socket_id);
     if (dom_elements.length != 0) {
-        dom_elements.slideUp(1000);
+        let time = 1000
+        dom_elements.slideUp(time, function () { $(this).remove(); addFillerText(); })
     }
 
     //Message to show player leaving
@@ -170,6 +170,29 @@ socket.on("player_disconnected", function (payload) {
     $("#messages").prepend(newNode);
     newNode.slideDown(1000);
 
+    //Adds filler text if no players available
+    function addFillerText() {
+        if (!$.trim($('#players').html()).length) {
+            let fillerText = "No one's here :/"
+            let mainNode = $('<li></li>')
+            mainNode.addClass("card-header align-items-center pt-2 pb-0")
+            mainNode.attr("id", "filler-player")
+
+            let divNode = $("<div></div>")
+            divNode.addClass("col text-center")
+
+            let textNode = $("<h4>" + fillerText + "</h4>")
+            textNode.addClass("text-center")
+            textNode.css({ "width": "max-content", "margin-left": "auto", "margin-right": "auto" });
+
+            divNode.append(textNode)
+            mainNode.append(divNode)
+            mainNode.hide();
+
+            $('#players').append(mainNode)
+            mainNode.slideDown(1000);
+        }
+    }
 });
 
 /* Send a new message */
@@ -201,6 +224,7 @@ socket.on("send_message_response", function (payload) {
     $("#messages").prepend(newNode);
     newNode.slideDown(1000)
 });
+
 
 /* Invitations */
 
@@ -296,25 +320,23 @@ function game_start(who) {
 }
 
 
-function spawn_bot(ai_type, role) {
+function spawn_bot(difficulty, ai_type) {
     var payload = {};
-    payload.difficulty = $("#difficulty").children("option:selected").val();
+    payload.difficulty = difficulty
     payload.ai_type = ai_type
-    payload.role = role // TODO remove this from everything? but leave for now
-    payload.username = username + "_bot_" + ai_type + "_" + payload.difficulty
+    payload.role = "play"
+    payload.username = username + "_bot_" + ai_type + "_" + difficulty
     payload.opponent = "none";
 
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
     socket.emit('spawn_bot', payload)
 }
 
-function spawn_bots(ai_type1, ai_type2) {
+function spawn_bots(difficulty1, ai_type1, difficulty2, ai_type2) {
     var payload = {};
-    difficulty1 = $("#difficulty").children("option:selected").val();
-    difficulty2 = difficulty1;
-    
-    username1 = username + "_b2b_"+ai_type1 + "_" + difficulty1
-    username2 = username + "_b2b_"+ai_type2 + "_" + difficulty2
+
+    username1 = username + "_" + ai_type1 + "_" + difficulty1 + Math.floor(Math.random()*100)
+    username2 = username + "_" + ai_type2 + "_" + difficulty2 + Math.floor(Math.random()*100)
 
     payload.username = username1
     payload.difficulty = difficulty1
@@ -323,7 +345,7 @@ function spawn_bots(ai_type1, ai_type2) {
     payload.opponent = username2
     console.log("*** Client Log Message: 'spawn_bot' payload: " + JSON.stringify(payload));
     socket.emit('spawn_bot', payload)
-    
+
     payload.username = username2
     payload.difficulty = difficulty2
     payload.ai_type = ai_type2
@@ -398,12 +420,14 @@ function makeKillButton(socket_id) {
     return (newNode)
 }
 
-function goHome(){
+function goHome() {
     window.location.href = 'index.html'
 }
 
 /*** Ready Load ***/
 $(function () {
+
+    // Announce entry
     var payload = {};
     payload.room = chat_room;
     payload.username = username;
@@ -413,6 +437,24 @@ $(function () {
     socket.emit("join_room", payload);
 
     $('#quit').append('<a href="lobby.html?username=' + username + '" class="btn btn-danger" role="button" aria-pressed="true">Quit</a>')
+
+    // Listen for bot spawners
+    $("button#spawn-single").click(function () {
+        var difficulty = $("select#difficulty").children("option:selected").val()
+        var type = $("select#type").children("option:selected").val()
+
+        spawn_bot(difficulty, type)
+    });
+
+    $("button#spawn-two").click(function () {
+        var difficulty1 = $("select#difficulty1").children("option:selected").val()
+        var type1 = $("select#type1").children("option:selected").val()
+
+        var difficulty2 = $("select#difficulty2").children("option:selected").val()
+        var type2 = $("select#type2").children("option:selected").val()
+
+        spawn_bots(difficulty1, type1, difficulty2, type2)
+    });
 
 });
 
@@ -458,7 +500,7 @@ socket.on('game_update', function (payload) {
         $('link[rel="icon"]').attr('href', 'assets/images/black_tile.png')
     } else {
         /* Something weird happened, send client back to lobby */
-        console.log('something weird happened, sending back to lobby')
+        console.log('Something weird happened, sending back to lobby')
         window.location.href = "lobby.html?username=" + username
     }
 

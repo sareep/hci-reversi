@@ -1,85 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Reversi Game Lobby | Reversi</title>
 
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+<head>
+  <title>Reversi Game Lobby | Reversi</title>
 
-    <link rel="icon" href="assets/images/NewGameIcon.png">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/main.css">
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-  </head>
-  <body class="bg-light">
-    <div class="alerts"></div>
+  <link rel="icon" href="assets/images/NewGameIcon.png">
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
 
-    <div class="container-fluid text-center">
 
-      <!--Heading-->
-      <div class="row bg-primary mb-2 align-items-center">
-        <div class="col-2 text-left mt-2">
-          <h4 id="home" onclick="goHome()" class="btn bg-secondary">Home</h4>
+<body class="bg-light">
+  <div class="alerts"></div>
+
+  <div class="container-fluid text-center">
+
+    <!--Heading-->
+    <div class="row bg-primary mb-2 align-items-center">
+      <div class="col-2 text-left mt-2">
+        <h4 id="home" onclick="goHome()" class="btn bg-secondary">Home</h4>
+      </div>
+      <div class="col-8">
+        <h2>Lobby</h2>
+      </div>
+      <div class="col-2"></div>
+    </div>
+
+    <!--Opponents-->
+    <div class="row">
+
+      <!-- Bot Controls -->
+      <div class="col mb-2">
+
+        <div class="accordion" id="bot-controls">
+          <div class="card bg-white">
+            <h3 class="pt-2">Play With Bots!</h3>
+          </div>
+
+          <!-- Single Bot -->
+          <div class="card">
+            <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+              aria-expanded="false" aria-controls="collapseOne">
+              <h5 class="mb-0">
+                Bot VS You
+              </h5>
+            </div>
+
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#bot-controls">
+              <div class="card-body">
+                <form id="single-bot">
+
+                  <div class="form-group">
+                    <label for="difficulty">Difficulty</label>
+                    <select id="difficulty" class="form-control">
+                      <option value="easy">Easy</option>
+                      <option value="medium">Medium</option>
+                      <option value="hard">Hard</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="type">Type</label>
+                    <select id="type" class="form-control">
+                      <option value="mm">MiniMax</option>
+                      <option value="rl">Reinforcement Learning</option>
+                    </select>
+                  </div>
+
+                  <button id="spawn-single" type="button" class="btn btn-primary">Spawn Bot</button>
+                </form>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Two Bots -->
+          <div class="card">
+            <div class="card-header" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo"
+              aria-expanded="false" aria-controls="collapseTwo">
+              <h5 class="mb-0">
+                Bot VS Bot
+              </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#bot-controls">
+              <div class="card-body">
+                <form id="two-bots">
+
+                  <div class="form-inline pb-2">
+                    <label class="col-6" for="difficulty1">Bot 1 Difficulty</label>
+                    <select id="difficulty1" class="form-control col-6">
+                      <option value="easy">Easy</option>
+                      <option value="medium">Medium</option>
+                      <option value="hard">Hard</option>
+                    </select>
+                  </div>
+
+                  <div class="form-inline pb-2">
+                    <label class="col-6" for="type1">Bot 1 Type</label>
+                    <select id="type1" class="form-control col-6">
+                      <option value="mm">MiniMax</option>
+                      <option value="rl">Reinforcement Learning</option>
+                    </select>
+                  </div>
+
+                  <hr />
+
+                  <div class="form-inline pb-2">
+                    <label class="col-6" for="difficulty2">Bot 2 Difficulty</label>
+                    <select id="difficulty2" class="form-control col-6">
+                      <option value="easy">Easy</option>
+                      <option value="medium">Medium</option>
+                      <option value="hard">Hard</option>
+                    </select>
+                  </div>
+
+                  <div class="form-inline pb-2">
+                    <label class="col-6" for="type2">Bot 2 Type</label>
+                    <select id="type2" class="form-control col-6">
+                      <option value="mm">MiniMax</option>
+                      <option value="rl">Reinforcement Learning</option>
+                    </select>
+                  </div>
+
+                  <hr />
+
+                  <button type="button" id="spawn-two" class="btn btn-primary">Spawn Bots</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="col-8">
-          <h2>Lobby</h2>
-        </div>
-        <div class="col-2"></div>
+
+        </form>
+
       </div>
 
-      <!--Bot Buttons-->
-      <div class="row">
-        <div class="col">
-          <div id="spawns">
-            <label for="difficulty">Bot difficulty:</label>
-            <select id="difficulty">
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
 
-            <button class="btn btn-default btn-secondary" onclick="spawn_bot('mm', 'play'); return false;">
-              Spawn Minimax Bot
-            </button>
-            <button type="button" class="btn btn-default btn-secondary" onclick="spawn_bot('rl', 'play'); return false;">
-              Spawn RL Bot
-            </button>
-            <!-- <button type="button" class="btn btn-default btn-secondary" onclick="spawn_bot('rl', 'learn'); return false;">
-              Train RL Bot
-            </button> -->
-            <button class="btn btn-default btn-secondary" onclick="spawn_bots('mm', 'rl'); return false;">
-              Make 2 Bots Play
-            </button>
-            <!-- <button class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl_bot'); return false;">
-              Spawn AB Bot
-            </button>
-            <button class="btn btn-default btn-secondary" onclick="spawn_bot('easy', 'rl_bot'); return false;">
-              Spawn AB Trained Bot
-            </button> -->
+      <!-- Players in Lobby -->
+      <div class="col mb-2">
+        <div class="container-fluid text-center overflow-auto">
+          <div class="row card">
+            <div class="text-center card-header bg-white pt-2 pb-0">
+              <h3 style="width:max-content; margin-left:auto; margin-right: auto;">Players in Lobby</h3>
+            </div>
+            <ul class="list-group" id="players">
+              <li class="card-header align-items-center pt-2 pb-0" id="filler-player">
+                <div class="col text-center">
+                  <h4 class="text-center">No one's here:/</h4>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <!--Player List-->
-      <div class="row align-items-end" id="players">
-        <div class="col-9 text-left ">
-          <h3>Players</h3>
-        </div>
+    </div>
 
-        <div class="col-3"></div>
-      </div>
-      
+    <!--Messages-->
+    <div class="container-fluid mt-4">
       <!--Send Message-->
       <div class="row">
         <div class="col text-center">
           <h3>Messages</h3>
           <form class="form-inline" onsubmit="send_message(); return false;">
-              <label for="send_message_holder" class="col-form-label sr-only">Enter your message</label>
-              <input class="form-control mx-auto w-75" type="text" value="" id="send_message_holder" placeholder="Enter your message" autocomplete="off"/>
-              <button type="submit" class="btn btn-default btn-secondary">
-                Send
-              </button>
+            <label for="send_message_holder" class="col-form-label sr-only">Enter your message</label>
+            <input class="form-control mx-auto w-75" type="text" value="" id="send_message_holder"
+              placeholder="Enter your message" autocomplete="off" />
+            <button type="submit" class="btn btn-default btn-secondary">
+              Send
+            </button>
           </form>
         </div>
       </div>
@@ -90,36 +184,28 @@
           <div id="messages"></div>
         </div>
       </div>
-
     </div>
 
-    <!-- Scripts -->
+  </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"
-    ></script>
+  <!-- Scripts -->
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
-      integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo="
-      crossorigin="anonymous"
-    ></script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
 
-    <script src="js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
+    integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
 
-  </body>
+  <script src="js/main.js"></script>
+
+</body>
+
 </html>

@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/sareep/hci-reversi#readme",
   "dependencies": {
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "node-static": "^0.7.11",
     "optimist": "^0.6.1",
     "socket.io": "^2.3.0"

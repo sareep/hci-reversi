@@ -1,0 +1,39 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "16:00" # 9am Pacific = 16:00 UTC
+      timezone: "America/Los_Angeles"
+    groups:
+      npm-prod-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "dev-*"
+      npm-dev-dependencies:
+        patterns:
+          - "dev-*"
+
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "16:00" # 9am Pacific = 16:00 UTC
+      timezone: "America/Los_Angeles"
+    groups:
+      maven-prod-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "*-test"
+          - "*-dev"
+      maven-dev-dependencies:
+        patterns:
+          - "*-dev"
+      maven-test-dependencies:
+        patterns:
+          - "*-test"
